@@ -493,130 +493,128 @@ function formField(label,html){return `<div class="field"><label>${label}</label
 function openModal(title,body,onSave){$('#modal').innerHTML=`<div class="page-head"><h2 style="margin:0">${title}</h2><button class="btn secondary" onclick="closeModal()">Cerrar</button></div>${body}<div class="actions" style="margin-top:14px"><button class="btn" id="modalSave">Guardar</button></div>`;$('#modalWrap').style.display='grid';$('#modalSave').onclick=()=>{onSave();closeModal();refresh();}}
 function closeModal(){$('#modalWrap').style.display='none'}
 function openForm(type){
+
  const ask=(label,def='')=>prompt(label,def);
+
  if(type==='client'){
-  const name=ask('Nombre del cliente'); if(!name)return;
-  state.clients.push({id:uid(),name,phone:ask('Teléfono',''),email:ask('Email',''),address:ask('Dirección',''),jobs:0,maint:0});
+  const name=ask('Nombre del cliente');
+  if(!name)return;
+
+  state.clients.push({
+   id:uid(),
+   name:name,
+   phone:ask('Teléfono',''),
+   email:ask('Email',''),
+   address:ask('Dirección',''),
+   jobs:0,
+   maint:0
+  });
  }
- else if(type==='job
-  state.jobs.push({id:uid(),date:ask('Fecha','27/09/2026'),time:ask('Hora','08:00'),client:ask('Cliente',''),type:ask('Tipo','Corte de césped'),area:ask('Área','Jardinería'),hours:Number(ask('Horas','1'))||0,amount:Number(ask('Importe','0'))||0,status:ask('Estado','Pendiente'),description:ask('Descripción','')})
- else if(type==='maintenelse if(type==='job'){
 
- const defaultDate=
-  calendarYear+'-'+
-  String(calendarMonth+1).padStart(2,'0')+
-  '-01';
+ else if(type==='job'){
 
- return openModal(
-  'Nuevo trabajo',
+  const iso=ask(
+   'Fecha (AAAA-MM-DD)',
+   calendarYear+'-'+String(calendarMonth+1).padStart(2,'0')+'-01'
+  );
 
-  `<div class="form-grid">
+  if(!iso)return;
 
-   <div class="field">
-    <label>Fecha</label>
-    <input id="f_date" type="date" value="${defaultDate}">
-   </div>
+  const p=iso.split('-');
 
-   <div class="field">
-    <label>Hora</label>
-    <input id="f_time" type="time" value="08:00">
-   </div>
+  state.jobs.push({
+   id:uid(),
+   date:p[2]+'/'+p[1]+'/'+p[0],
+   time:ask('Hora','08:00'),
+   client:ask('Cliente',''),
+   type:ask('Trabajo','Trabajo'),
+   area:ask('Área','Jardinería'),
+   hours:Number(ask('Horas','1'))||0,
+   amount:Number(ask('Importe','0'))||0,
+   status:ask('Estado','Pendiente'),
+   description:ask('Descripción','')
+  });
 
-   <div class="field">
-    <label>Cliente</label>
-    <input id="f_client">
-   </div>
-
-   <div class="field">
-    <label>Trabajo</label>
-    <input id="f_type">
-   </div>
-
-   <div class="field">
-    <label>Área</label>
-    <select id="f_area">
-     <option>Jardinería</option>
-     <option>Puerto</option>
-     <option>General</option>
-    </select>
-   </div>
-
-   <div class="field">
-    <label>Horas</label>
-    <input id="f_hours" type="number" step="0.5" value="1">
-   </div>
-
-   <div class="field">
-    <label>Importe</label>
-    <input id="f_amount" type="number" step="0.01" value="0">
-   </div>
-
-   <div class="field">
-    <label>Estado</label>
-    <select id="f_status">
-     <option>Pendiente</option>
-     <option>En curso</option>
-     <option>Realizado</option>
-     <option>Cancelado</option>
-    </select>
-   </div>
-
-   <div class="field">
-    <label>Descripción</label>
-    <textarea id="f_desc"></textarea>
-   </div>
-
-  </div>`,
-
-  ()=>{
-
-   const iso=$('#f_date').value;
-   const p=iso.split('-');
-
-   const fecha=
-    p[2]+'/'+p[1]+'/'+p[0];
-
-   state.jobs.push({
-    id:uid(),
-    date:fecha,
-    time:$('#f_time').value,
-    client:$('#f_client').value,
-    type:$('#f_type').value,
-    area:$('#f_area').value,
-    hours:Number($('#f_hours').value||0),
-    amount:Number($('#f_amount').value||0),
-    status:$('#f_status').value,
-    description:$('#f_desc').value
-   });
-
-   save();
-
-   const d=parseAppDate(fecha);
-
-   if(d){
-    calendarYear=d.year;
-    calendarMonth=d.month;
-   }
-  }
- );
-}ance'){
-  state.maintenance.push({id:uid(),title:ask('Mantenimiento',''),client:ask('Cliente',''),freq:ask('Periodicidad','Mensual'),next:ask('Próxima fecha','01/10/2026'),status:ask('Estado','Pendiente'),amount:Number(ask('Importe','0'))||0});
+  calendarYear=Number(p[0]);
+  calendarMonth=Number(p[1])-1;
  }
+
+ else if(type==='maintenance'){
+
+  state.maintenance.push({
+   id:uid(),
+   title:ask('Mantenimiento',''),
+   client:ask('Cliente',''),
+   freq:ask('Periodicidad','Mensual'),
+   next:ask('Próxima fecha','01/10/2026'),
+   status:ask('Estado','Pendiente'),
+   amount:Number(ask('Importe','0'))||0
+  });
+ }
+
  else if(type==='pendingInvoice'){
-  state.pendingInvoice.push({id:uid(),date:ask('Fecha','27/09/2026'),client:ask('Cliente',''),work:ask('Trabajo',''),amount:Number(ask('Importe','0'))||0});
+
+  state.pendingInvoice.push({
+   id:uid(),
+   date:ask('Fecha','27/09/2026'),
+   client:ask('Cliente',''),
+   work:ask('Trabajo',''),
+   amount:Number(ask('Importe','0'))||0
+  });
  }
+
  else if(type==='bank'){
-  state.bank.push({id:uid(),date:ask('Fecha','27/09/2026'),client:ask('Cliente',''),invoice:ask('Factura','F-0000'),amount:Number(ask('Importe','0'))||0,status:ask('Estado','Pendiente')});
+
+  state.bank.push({
+   id:uid(),
+   date:ask('Fecha','27/09/2026'),
+   client:ask('Cliente',''),
+   invoice:ask('Factura','F-0000'),
+   amount:Number(ask('Importe','0'))||0,
+   status:ask('Estado','Pendiente')
+  });
  }
+
  else if(type==='expense'){
-  state.expenses.push({id:uid(),date:ask('Fecha','27/09/2026'),concept:ask('Concepto',''),category:ask('Categoría','General'),amount:Number(ask('Importe','0'))||0,type:ask('Tipo','Variable')});
+
+  state.expenses.push({
+   id:uid(),
+   date:ask('Fecha','27/09/2026'),
+   concept:ask('Concepto',''),
+   category:ask('Categoría','General'),
+   amount:Number(ask('Importe','0'))||0,
+   type:ask('Tipo','Variable')
+  });
  }
+
  else if(type==='reminder'){
-  state.reminders.push({id:uid(),date:ask('Fecha','27/09/2026'),time:ask('Hora','17:00'),title:ask('Texto',''),priority:ask('Prioridad','Media'),repeat:ask('Repetición','No repetir'),done:false});
+
+  state.reminders.push({
+   id:uid(),
+   date:ask('Fecha','27/09/2026'),
+   time:ask('Hora','17:00'),
+   title:ask('Texto',''),
+   priority:ask('Prioridad','Media'),
+   repeat:ask('Repetición','No repetir'),
+   done:false
+  });
  }
+
  else if(type==='puerto'){
-  state.puerto.push({id:uid(),date:ask('Fecha','27/09/2026'),shift:ask('Turno','08:00–14:00'),hours:Number(ask('Horas','6'))||0,foreman:ask('Capataz',''),operation:ask('Operativa',''),work:ask('Trabajo realizado',''),amount:Number(ask('€','0'))||0,note:ask('Notas','')});
+
+  state.puerto.push({
+   id:uid(),
+   date:ask('Fecha','27/09/2026'),
+   shift:ask('Turno','08:00–14:00'),
+   hours:Number(ask('Horas','6'))||0,
+   foreman:ask('Capataz',''),
+   operation:ask('Operativa',''),
+   work:ask('Trabajo realizado',''),
+   amount:Number(ask('€','0'))||0,
+   note:ask('Notas','')
+  });
  }
+
  save();
  refresh();
 }
