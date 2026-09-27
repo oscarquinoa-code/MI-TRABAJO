@@ -375,7 +375,19 @@ function editJob(i){
 
  toast('Trabajo actualizado');
 }
+let calendarYear = new Date().getFullYear();
+let calendarMonth = new Date().getMonth();
 
+function parseAppDate(value){
+ const p=String(value||'').split('/');
+ if(p.length!==3)return null;
+
+ return {
+  day:Number(p[0]),
+  month:Number(p[1])-1,
+  year:Number(p[2])
+ };
+}
 function renderCalendario(){
 
  const meses=[
