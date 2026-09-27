@@ -232,20 +232,139 @@ function renderInicio(){
 }
 function tableHeaders(arr){return `<tr>${arr.map(x=>`<th>${x}</th>`).join('')}</tr>`}
 function renderTrabajos(){
- $('#view-trabajos').innerHTML=`<div class="page-head"><h1>🛠️ Trabajos</h1><button class="btn" onclick="openForm('job')">＋ Nuevo trabajo</button></div>
- <div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Hora','Cliente','Trabajo','Área','Horas','Importe','Estado','Acciones'])}</thead><tbody>${state.jobs.map((j,i)=>`<tr><td>${j.date}</td><td>${j.time}</td><td>${j.client}</td><td>${j.type}<div class="muted">${j.description}</div></td><td>${j.area}</td><td>${j.hours} h</td><td>${money(j.amount)}</td><td><span class="tag ${j.status==='Pendiente'?'pending':''}">${j.status}</span></td><td><button class="btn secondary" onclick="deleteItem('jobs',${i},'Trabajos')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
-}
-let calendarYear = new Date().getFullYear();
-let calendarMonth = new Date().getMonth();
 
-function parseAppDate(value){
- const p = String(value || '').split('/');
- if(p.length !== 3) return null;
- return {
-  day:Number(p[0]),
-  month:Number(p[1])-1,
-  year:Number(p[2])
- };
+ $('#view-trabajos').innerHTML=`
+ <div class="page-head">
+  <h1>🛠️ Trabajos</h1>
+  <button class="btn" onclick="openForm('job')">
+   ＋ Nuevo trabajo
+  </button>
+ </div>
+
+ <div class="card">
+
+  <table class="table">
+
+   <thead>
+    ${tableHeaders([
+     'Fecha',
+     'Hora',
+     'Cliente',
+     'Trabajo',
+     'Área',
+     'Horas',
+     'Importe',
+     'Estado',
+     'Acciones'
+    ])}
+   </thead>
+
+   <tbody>
+
+    ${state.jobs.map((j,i)=>`
+
+     <tr>
+
+      <td>${j.date}</td>
+
+      <td>${j.time}</td>
+
+      <td>${j.client}</td>
+
+      <td>
+       ${j.type}
+       <div class="muted">${j.description||''}</div>
+      </td>
+
+      <td>${j.area}</td>
+
+      <td>${j.hours} h</td>
+
+      <td>${money(j.amount)}</td>
+
+      <td>
+
+       <button
+        class="btn secondary"
+        onclick="changeJobStatus(${i})">
+
+        ${j.status}
+
+       </button>
+
+      </td>
+
+      <td>
+
+       <button
+        class="btn secondary"
+        onclick="editJob(${i})">
+
+        Editar
+
+       </button>
+
+       <button
+        class="btn danger"
+        onclick="deleteItem('jobs',${i},'Trabajo')">
+
+        Eliminar
+
+       </button>
+
+      </td>
+
+     </tr>
+
+    `).join('')}
+
+   </tbody>
+
+  </table>
+
+ </div>
+ `;
+}
+
+function changeJobStatus(i){
+
+ const estados=[
+  'Pendiente',
+  'En curso',
+  'Realizado',
+  'Cancelado'
+ ];
+
+ const actual=estados.indexOf(state.jobs[i].status);
+
+ state.jobs[i].status=
+  estados[(actual+1)%estados.length];
+
+ save();
+ refresh();
+
+ toast(
+  'Estado: '+state.jobs[i].status
+ );
+}
+
+function editJob(i){
+
+ const j=state.jobs[i];
+
+ const estado=prompt(
+  'Estado: Pendiente / En curso / Realizado / Cancelado',
+  j.status
+ );
+
+ if(estado===null)return;
+
+ j.status=estado;
+
+ save();
+ refresh();
+
+ toast('Trabajo actualizado');
 }
 
 function renderCalendario(){
