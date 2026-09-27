@@ -275,9 +275,31 @@ function openForm(type){
  if(type==='puerto')return openModal('Nuevo turno de Puerto',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Turno','<input id="f_shift" value="08:00–14:00">')}${formField('Horas','<input id="f_hours" type="number" value="6">')}${formField('Capataz','<input id="f_foreman">')}${formField('Operativa','<input id="f_operation">')}${formField('Trabajo realizado','<input id="f_work">')}${formField('€','<input id="f_amount" type="number" value="0">')}${formField('Notas','<textarea id="f_note"></textarea>')}</div>`,()=>{state.puerto.push({id:uid(),date:$('#f_date').value,shift:$('#f_shift').value,hours:Number($('#f_hours').value||0),foreman:$('#f_foreman').value,operation:$('#f_operation').value,work:$('#f_work').value,amount:Number($('#f_amount').value||0),note:$('#f_note').value});save()});
 }
 function editClient(i){const c=state.clients[i];openModal('Editar cliente',`<div class="form-grid">${formField('Nombre',`<input id="f_name" value="${c.name}">`)}${formField('Teléfono',`<input id="f_phone" value="${c.phone}">`)}${formField('Email',`<input id="f_email" value="${c.email||''}">`)}${formField('Dirección',`<input id="f_address" value="${c.address||''}">`)}</div>`,()=>{Object.assign(c,{name:$('#f_name').value,phone:$('#f_phone').value,email:$('#f_email').value,address:$('#f_address').value});save()})}
-function refresh(){navRender();applyTheme();show($('#nav button.active')?.dataset.id||'inicio')}
+function render(id){
+ const renderers={
+  inicio:renderInicio,
+  trabajos:renderTrabajos,
+  calendario:renderCalendario,
+  clientes:renderClientes,
+  puerto:renderPuerto,
+  mantenimiento:renderMantenimiento,
+  facturar:renderFacturar,
+  cobros:renderCobros,
+  gastos:renderGastos,
+  recordatorios:renderRecordatorios,
+  informes:renderInformes,
+  config:renderConfig
+ };
+ const fn=renderers[id];
+ if(typeof fn==='function') fn();
+}
+ function refresh(){navRender();applyTheme();show($('#nav button.active')?.dataset.id||'inicio')}
 $('#search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();$$('.view.active tbody tr').forEach(tr=>tr.style.display=tr.innerText.toLowerCase().includes(q)?'':'none')})
-applyTheme();navRender();show('inicio');save();
+if(!state || !Array.isArray(state.modules)){
+ localStorage.removeItem('mitrabajo_final');
+ state=JSON.parse(JSON.stringify(defaultState));
+}
+ applyTheme();navRender();show('inicio');save();
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body></html>
