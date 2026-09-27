@@ -133,7 +133,24 @@ const defaultState={
  ],
  cash:1200
 };
-let state=JSON.parse(localStorage.getItem('mitrabajo_final')||'null')||defaultState;
+let state;
+try {
+  state = JSON.parse(localStorage.getItem('mitrabajo_final') || 'null');
+} catch(e) {
+  state = null;
+  localStorage.removeItem('mitrabajo_final');
+}
+
+if (
+  !state ||
+  typeof state !== 'object' ||
+  !Array.isArray(state.modules) ||
+  !state.theme ||
+  !Array.isArray(state.jobs) ||
+  !Array.isArray(state.clients)
+) {
+  state = JSON.parse(JSON.stringify(defaultState));
+}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=n=>Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
 const sum=(a,k)=>a.reduce((s,x)=>s+Number(x[k]||0),0);
