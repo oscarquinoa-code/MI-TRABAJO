@@ -53,6 +53,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.app{min-height:
  <section class="view" id="view-mantenimiento"></section>
  <section class="view" id="view-facturar"></section>
  <section class="view" id="view-cobros"></section>
+ <section class="view" id="view-banco"></section>
  <section class="view" id="view-gastos"></section>
  <section class="view" id="view-recordatorios"></section>
  <section class="view" id="view-informes"></section>
@@ -74,6 +75,7 @@ const defaultState={
   {id:'mantenimiento',label:'Mantenimientos',icon:'🔧',visible:true},
   {id:'facturar',label:'Pendiente de facturar',icon:'📄',visible:true},
   {id:'cobros',label:'Ingresos / Cobros',icon:'🏦',visible:true},
+  {id:'banco',label:'Banco',icon:'🏦',visible:true},
   {id:'gastos',label:'Gastos',icon:'💸',visible:true},
   {id:'recordatorios',label:'Recordatorios',icon:'🔔',visible:true},
   {id:'informes',label:'Informes',icon:'📊',visible:true},
@@ -159,7 +161,10 @@ if (
 ) {
   state = JSON.parse(JSON.stringify(defaultState));
 }
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+if(!Array.isArray(state.banco)){
+ state.banco=[];
+}
+ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=n=>Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
 const sum=(a,k)=>a.reduce((s,x)=>s+Number(x[k]||0),0);
 function save(){localStorage.setItem('mitrabajo_final',JSON.stringify(state))}
@@ -453,6 +458,134 @@ function renderCobros(){
  const ing=sum(state.bank.filter(x=>x.status==='Ingresado'),'amount'), pen=sum(state.bank.filter(x=>x.status==='Pendiente'),'amount');
  $('#view-cobros').innerHTML=`<div class="page-head"><h1>🏦 Ingresos / Cobros</h1><button class="btn" onclick="openForm('bank')">＋ Añadir</button></div><div class="grid6">${metric('Ingresado',money(ing),'🏦')}${metric('Pendiente de cobro',money(pen),'🕐')}${metric('Total',money(ing+pen),'💶')}</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Cliente','Factura','Importe','Estado','Acción'])}</thead><tbody>${state.bank.map((x,i)=>`<tr><td>${x.date}</td><td>${x.client}</td><td>${x.invoice}</td><td>${money(x.amount)}</td><td><span class="tag ${x.status==='Pendiente'?'pending':''}">${x.status}</span></td><td>${x.status==='Pendiente'?`<button class="btn" onclick="markCollected(${i})">Marcar cobrado</button>`:''} <button class="btn danger" onclick="deleteItem('bank',${i},'Cobro')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
 }
+ function renderBanco(){
+
+ const ingresado=sum(
+  state.banco.filter(x=>x.status==='Ingresado'),
+  'amount'
+ );
+
+ const pendiente=sum(
+  state.banco.filter(x=>x.status!=='Ingresado'),
+  'amount'
+ );
+
+ $('#view-banco').innerHTML=`
+
+ <div class="page-head">
+
+  <h1>🏦 Banco</h1>
+
+  <button class="btn" onclick="openForm('banco')">
+   ＋ Nuevo movimiento
+  </button>
+
+ </div>
+
+ <div class="grid6">
+
+  ${metric(
+   'Ingresado',
+   money(ingresado),
+   '✅'
+  )}
+
+  ${metric(
+   'Pendiente',
+   money(pendiente),
+   '🕐'
+  )}
+
+  ${metric(
+   'Total',
+   money(ingresado+pendiente),
+   '💶'
+  )}
+
+ </div>
+
+ <br>
+
+ <div class="card">
+
+  <table class="table">
+
+   <thead>
+
+    ${tableHeaders([
+     'Cliente',
+     'Fecha',
+     'Hora',
+     'Nº Factura',
+     'Importe',
+     'Estado',
+     'Acciones'
+    ])}
+
+   </thead>
+
+   <tbody>
+
+    ${state.banco.map((x,i)=>`
+
+     <tr>
+
+      <td>${x.client||''}</td>
+
+      <td>${x.date||''}</td>
+
+      <td>${x.time||''}</td>
+
+      <td>${x.invoice||''}</td>
+
+      <td>${money(x.amount)}</td>
+
+      <td>
+
+       <span class="tag ${
+        x.status==='Ingresado' ? '' : 'pending'
+       }">
+
+        ${x.status==='Ingresado'
+         ? 'Ingresado'
+         : 'No ingresado'}
+
+       </span>
+
+      </td>
+
+      <td>
+
+       ${
+        x.status!=='Ingresado'
+        ? `<button
+             class="btn"
+             onclick="markBancoIngresado(${i})">
+             Marcar ingresado
+           </button>`
+        : ''
+       }
+
+       <button
+        class="btn danger"
+        onclick="deleteBanco(${i})">
+        Eliminar
+       </button>
+
+      </td>
+
+     </tr>
+
+    `).join('')}
+
+   </tbody>
+
+  </table>
+
+ </div>
+
+ `;
+}
 function renderGastos(){
  $('#view-gastos').innerHTML=`<div class="page-head"><h1>💸 Gastos</h1><button class="btn" onclick="openForm('expense')">＋ Nuevo gasto</button></div><div class="grid6">${metric('Variables',money(sum(state.expenses.filter(x=>x.type==='Variable'),'amount')))}${metric('Fijos',money(sum(state.expenses.filter(x=>x.type==='Fijo'),'amount')))}${metric('Total',money(sum(state.expenses,'amount')))}</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Concepto','Categoría','Tipo','Importe','Acción'])}</thead><tbody>${state.expenses.map((x,i)=>`<tr><td>${x.date}</td><td>${x.concept}</td><td>${x.category}</td><td>${x.type}</td><td>${money(x.amount)}</td><td><button class="btn danger" onclick="deleteItem('expenses',${i},'Gasto')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
 }
@@ -495,6 +628,30 @@ function importData(){const input=document.createElement('input');input.type='fi
 function deleteItem(key,i,label){if(confirm('¿Eliminar '+label+'?')){state[key].splice(i,1);save();refresh();toast(label+' eliminado')}}
 function toggleMaintenance(i){state.maintenance[i].status=state.maintenance[i].status==='Realizado'?'Pendiente':'Realizado';save();refresh()}
 function toggleReminder(i){state.reminders[i].done=!state.reminders[i].done;save();refresh()}
+ function markBancoIngresado(i){
+
+ state.banco[i].status='Ingresado';
+
+ save();
+
+ refresh();
+
+ toast('Movimiento bancario marcado como ingresado');
+}
+
+function deleteBanco(i){
+
+ if(confirm('¿Eliminar este movimiento bancario?')){
+
+  state.banco.splice(i,1);
+
+  save();
+
+  refresh();
+
+  toast('Movimiento bancario eliminado');
+ }
+}
 function markCollected(i){state.bank[i].status='Ingresado';save();refresh();toast('Cobro marcado como ingresado')}
 function facturar(i){const x=state.pendingInvoice[i];state.bank.push({id:uid(),date:'16/09/2026',client:x.client,invoice:'Nueva',amount:x.amount,status:'Pendiente'});state.pendingInvoice.splice(i,1);save();refresh();toast('Trabajo pasado a pendiente de cobro')}
 function formField(label,html){return `<div class="field"><label>${label}</label>${html}</div>`}
@@ -570,7 +727,59 @@ function openForm(type){
    amount:Number(ask('Importe','0'))||0
   });
  }
+else if(type==='banco'){
 
+ const cliente=prompt(
+  'Cliente',
+  ''
+ );
+
+ if(cliente===null)return;
+
+ const fecha=prompt(
+  'Fecha',
+  '27/09/2026'
+ );
+
+ if(fecha===null)return;
+
+ const hora=prompt(
+  'Hora',
+  '12:00'
+ );
+
+ if(hora===null)return;
+
+ const factura=prompt(
+  'Número de factura',
+  ''
+ );
+
+ if(factura===null)return;
+
+ const importe=Number(
+  prompt('Importe','0')
+ )||0;
+
+ const estado=confirm(
+  '¿Está ingresado en el banco?'
+ )
+  ? 'Ingresado'
+  : 'No ingresado';
+
+ state.banco.push({
+  id:uid(),
+  client:cliente,
+  date:fecha,
+  time:hora,
+  invoice:factura,
+  amount:importe,
+  status:estado
+ });
+
+ save();
+ refresh();
+}
  else if(type==='bank'){
 
   state.bank.push({
@@ -638,6 +847,7 @@ function render(id){
   mantenimiento:renderMantenimiento,
   facturar:renderFacturar,
   cobros:renderCobros,
+  banco:renderBanco,
   gastos:renderGastos,
   recordatorios:renderRecordatorios,
   informes:renderInformes,
