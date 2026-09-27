@@ -213,10 +213,221 @@ function renderTrabajos(){
  $('#view-trabajos').innerHTML=`<div class="page-head"><h1>🛠️ Trabajos</h1><button class="btn" onclick="openForm('job')">＋ Nuevo trabajo</button></div>
  <div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Hora','Cliente','Trabajo','Área','Horas','Importe','Estado','Acciones'])}</thead><tbody>${state.jobs.map((j,i)=>`<tr><td>${j.date}</td><td>${j.time}</td><td>${j.client}</td><td>${j.type}<div class="muted">${j.description}</div></td><td>${j.area}</td><td>${j.hours} h</td><td>${money(j.amount)}</td><td><span class="tag ${j.status==='Pendiente'?'pending':''}">${j.status}</span></td><td><button class="btn secondary" onclick="deleteItem('jobs',${i},'Trabajos')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
 }
+let calendarYear = new Date().getFullYear();
+let calendarMonth = new Date().getMonth();
+
+function parseAppDate(value){
+ const p = String(value || '').split('/');
+ if(p.length !== 3) return null;
+ return {
+  day:Number(p[0]),
+  month:Number(p[1])-1,
+  year:Number(p[2])
+ };
+}
+
 function renderCalendario(){
- const cells=[]; for(let i=1;i<=30;i++){const ev=state.jobs.filter(j=>Number(j.date.slice(0,2))===i);const rm=state.reminders.filter(r=>Number(r.date.slice(0,2))===i&&!r.done);cells.push(`<div class="cal-cell"><div class="cal-day">${i}</div>${ev.slice(0,2).map(e=>`<div class="muted"><span class="cal-dot green"></span>${e.time} ${e.type}</div>`).join('')}${rm.slice(0,2).map(e=>`<div class="muted"><span class="cal-dot red"></span>${e.time} ${e.title}</div>`).join('')}</div>`)}
- $('#view-calendario').innerHTML=`<div class="page-head"><h1>📅 Calendario</h1><div class="actions"><button class="btn" onclick="openForm('job')">＋ Trabajo</button><button class="btn secondary" onclick="openForm('reminder')">🔔 Recordatorio</button><button class="btn secondary" onclick="openForm('maintenance')">🔧 Mantenimiento</button></div></div>
- <div class="card"><div class="card-head"><h3>Septiembre 2026</h3><div class="muted">L M X J V S D</div></div><div class="calendar-grid">${cells.join('')}</div></div>`
+
+ const meses=[
+  'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+ ];
+
+ const dias=['L','M','X','J','V','S','D'];
+
+ const firstDay=new Date(calendarYear,calendarMonth,1);
+ const totalDays=new Date(calendarYear,calendarMonth+1,0).getDate();
+
+ let start=firstDay.getDay();
+ start=start===0?6:start-1;
+
+ let cells='';
+
+ for(let i=0;i<start;i++){
+  cells+='<div class="cal-cell"></div>';
+ }
+
+ for(let day=1;day<=totalDays;day++){
+
+  const jobs=state.jobs.filter(j=>{
+   const d=parseAppDate(j.date);
+   return d &&
+    d.day===day &&
+    d.month===calendarMonth &&
+    d.year===calendarYear;
+  });
+
+  const reminders=state.reminders.filter(r=>{
+   const d=parseAppDate(r.date);
+   return d &&
+    d.day===day &&
+    d.month===calendarMonth &&
+    d.year===calendarYear &&
+    !r.done;
+  });
+
+  const maintenance=state.maintenance.filter(m=>{
+   const d=parseAppDate(m.next);
+   return d &&
+    d.day===day &&
+    d.month===calendarMonth &&
+    d.year===calendarYear;
+  });
+
+  let content='';
+
+  jobs.slice(0,3).forEach(j=>{
+   content+=`<div class="muted">
+    <span class="cal-dot green"></span>
+    ${j.time} ${j.type}
+   </div>`;
+  });
+
+  reminders.slice(0,2).forEach(r=>{
+   content+=`<div class="muted">
+    <span class="cal-dot red"></span>
+    ${r.time} ${r.title}
+   </div>`;
+  });
+
+  maintenance.slice(0,2).forEach(m=>{
+   content+=`<div class="muted">
+    <span class="cal-dot orange"></span>
+    ${m.title}
+   </div>`;
+  });
+
+  cells+=`
+   <div class="cal-cell">
+    <div class="cal-day">${day}</div>
+    ${content}
+   </div>`;
+ }
+
+ $('#view-calendario').innerHTML=`
+  <div class="page-head">
+   <h1>📅 Calendario</h1>
+
+   <div class="actions">
+    <button class="btn secondary" onclick="calendarPrev()">‹</button>
+
+    <button class="btn secondary" onclick="calendarToday()">
+     Hoy
+    </button>
+
+    <button class="btn secondary" onclick="calendarNext()">›</button>
+
+    <button class="btn" onclick="openForm('job')">
+     ＋ Trabajo
+    </button>
+
+    <button class="btn secondary" onclick="openForm('reminder')">
+     🔔 Recordatorio
+    </button>
+
+    <button class="btn secondary" onclick="openForm('maintenance')">
+     🔧 Mantenimiento
+    </button>
+   </div>
+  </div>
+
+  <div class="card">
+
+   <div class="card-head">
+
+    <h3>
+     ${meses[calendarMonth]} ${calendarYear}
+    </h3>
+
+    <div class="actions">
+
+     <select onchange="calendarChangeMonth(this.value)">
+      ${meses.map((m,i)=>`
+       <option value="${i}" ${i===calendarMonth?'selected':''}>
+        ${m}
+       </option>
+      `).join('')}
+     </select>
+
+     <input
+      type="number"
+      min="1900"
+      max="2200"
+      value="${calendarYear}"
+      onchange="calendarChangeYear(this.value)"
+      style="width:100px;padding:8px;border:1px solid var(--line);border-radius:8px"
+     >
+
+    </div>
+
+   </div>
+
+   <div class="calendar-grid">
+    ${dias.map(d=>`
+     <div class="cal-cell">
+      <div class="cal-head">${d}</div>
+     </div>
+    `).join('')}
+   </div>
+
+   <div class="calendar-grid">
+    ${cells}
+   </div>
+
+  </div>
+ `;
+}
+
+function calendarPrev(){
+
+ calendarMonth--;
+
+ if(calendarMonth<0){
+  calendarMonth=11;
+  calendarYear--;
+ }
+
+ renderCalendario();
+}
+
+function calendarNext(){
+
+ calendarMonth++;
+
+ if(calendarMonth>11){
+  calendarMonth=0;
+  calendarYear++;
+ }
+
+ renderCalendario();
+}
+
+function calendarToday(){
+
+ const now=new Date();
+
+ calendarYear=now.getFullYear();
+ calendarMonth=now.getMonth();
+
+ renderCalendario();
+}
+
+function calendarChangeMonth(value){
+
+ calendarMonth=Number(value);
+
+ renderCalendario();
+}
+
+function calendarChangeYear(value){
+
+ calendarYear=Number(value);
+
+ if(!Number.isFinite(calendarYear)){
+  calendarYear=new Date().getFullYear();
+ }
+
+ renderCalendario();
 }
 function renderClientes(){
  $('#view-clientes').innerHTML=`<div class="page-head"><h1>👥 Clientes</h1><button class="btn" onclick="openForm('client')">＋ Nuevo cliente</button></div><div class="cards">${state.clients.map((c,i)=>`<div class="client-card"><h3>${c.name}</h3><div class="muted">${c.phone} · ${c.email||''}</div><p>${c.address||''}</p><b>${c.jobs}</b> trabajos · <b>${c.maint}</b> mantenimientos<div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="editClient(${i})">Editar</button><button class="btn danger" onclick="deleteItem('clients',${i},'Cliente')">Eliminar</button></div></div>`).join('')}</div>`
@@ -287,10 +498,108 @@ function openForm(type){
   const name=ask('Nombre del cliente'); if(!name)return;
   state.clients.push({id:uid(),name,phone:ask('Teléfono',''),email:ask('Email',''),address:ask('Dirección',''),jobs:0,maint:0});
  }
- else if(type==='job'){
-  state.jobs.push({id:uid(),date:ask('Fecha','27/09/2026'),time:ask('Hora','08:00'),client:ask('Cliente',''),type:ask('Tipo','Corte de césped'),area:ask('Área','Jardinería'),hours:Number(ask('Horas','1'))||0,amount:Number(ask('Importe','0'))||0,status:ask('Estado','Pendiente'),description:ask('Descripción','')});
- }
- else if(type==='maintenance'){
+ else if(type==='job
+  state.jobs.push({id:uid(),date:ask('Fecha','27/09/2026'),time:ask('Hora','08:00'),client:ask('Cliente',''),type:ask('Tipo','Corte de césped'),area:ask('Área','Jardinería'),hours:Number(ask('Horas','1'))||0,amount:Number(ask('Importe','0'))||0,status:ask('Estado','Pendiente'),description:ask('Descripción','')})
+ else if(type==='maintenelse if(type==='job'){
+
+ const defaultDate=
+  calendarYear+'-'+
+  String(calendarMonth+1).padStart(2,'0')+
+  '-01';
+
+ return openModal(
+  'Nuevo trabajo',
+
+  `<div class="form-grid">
+
+   <div class="field">
+    <label>Fecha</label>
+    <input id="f_date" type="date" value="${defaultDate}">
+   </div>
+
+   <div class="field">
+    <label>Hora</label>
+    <input id="f_time" type="time" value="08:00">
+   </div>
+
+   <div class="field">
+    <label>Cliente</label>
+    <input id="f_client">
+   </div>
+
+   <div class="field">
+    <label>Trabajo</label>
+    <input id="f_type">
+   </div>
+
+   <div class="field">
+    <label>Área</label>
+    <select id="f_area">
+     <option>Jardinería</option>
+     <option>Puerto</option>
+     <option>General</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Horas</label>
+    <input id="f_hours" type="number" step="0.5" value="1">
+   </div>
+
+   <div class="field">
+    <label>Importe</label>
+    <input id="f_amount" type="number" step="0.01" value="0">
+   </div>
+
+   <div class="field">
+    <label>Estado</label>
+    <select id="f_status">
+     <option>Pendiente</option>
+     <option>En curso</option>
+     <option>Realizado</option>
+     <option>Cancelado</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Descripción</label>
+    <textarea id="f_desc"></textarea>
+   </div>
+
+  </div>`,
+
+  ()=>{
+
+   const iso=$('#f_date').value;
+   const p=iso.split('-');
+
+   const fecha=
+    p[2]+'/'+p[1]+'/'+p[0];
+
+   state.jobs.push({
+    id:uid(),
+    date:fecha,
+    time:$('#f_time').value,
+    client:$('#f_client').value,
+    type:$('#f_type').value,
+    area:$('#f_area').value,
+    hours:Number($('#f_hours').value||0),
+    amount:Number($('#f_amount').value||0),
+    status:$('#f_status').value,
+    description:$('#f_desc').value
+   });
+
+   save();
+
+   const d=parseAppDate(fecha);
+
+   if(d){
+    calendarYear=d.year;
+    calendarMonth=d.month;
+   }
+  }
+ );
+}ance'){
   state.maintenance.push({id:uid(),title:ask('Mantenimiento',''),client:ask('Cliente',''),freq:ask('Periodicidad','Mensual'),next:ask('Próxima fecha','01/10/2026'),status:ask('Estado','Pendiente'),amount:Number(ask('Importe','0'))||0});
  }
  else if(type==='pendingInvoice'){
