@@ -161,6 +161,15 @@ if (
 ) {
   state = JSON.parse(JSON.stringify(defaultState));
 }
+ if (!state.modules.some(m => m.id === 'banco')) {
+  state.modules.push({
+    id:'banco',
+    label:'Banco',
+    icon:'🏦',
+    visible:true
+  });
+  save();
+}
 if(!Array.isArray(state.banco)){
  state.banco=[];
 }
