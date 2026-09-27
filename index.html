@@ -385,87 +385,104 @@ function renderCalendario(){
 
  const dias=['L','M','X','J','V','S','D'];
 
+ const jobs=Array.isArray(state.jobs)?state.jobs:[];
+ const reminders=Array.isArray(state.reminders)?state.reminders:[];
+ const maintenance=Array.isArray(state.maintenance)?state.maintenance:[];
+
  const firstDay=new Date(calendarYear,calendarMonth,1);
  const totalDays=new Date(calendarYear,calendarMonth+1,0).getDate();
 
- let start=firstDay.getDay();
- start=start===0?6:start-1;
+ let startDay=firstDay.getDay();
+ startDay=startDay===0?6:startDay-1;
 
  let cells='';
 
- for(let i=0;i<start;i++){
+ for(let i=0;i<startDay;i++){
   cells+='<div class="cal-cell"></div>';
  }
 
  for(let day=1;day<=totalDays;day++){
 
-  const jobs=state.jobs.filter(j=>{
+  let events='';
+
+  jobs.forEach(j=>{
    const d=parseAppDate(j.date);
-   return d &&
+
+   if(
+    d &&
     d.day===day &&
     d.month===calendarMonth &&
-    d.year===calendarYear;
+    d.year===calendarYear
+   ){
+    events+=`
+     <div class="muted">
+      <span class="cal-dot green"></span>
+      ${j.time||''} ${j.type||'Trabajo'}
+     </div>`;
+   }
   });
 
-  const reminders=state.reminders.filter(r=>{
+  reminders.forEach(r=>{
    const d=parseAppDate(r.date);
-   return d &&
+
+   if(
+    d &&
     d.day===day &&
     d.month===calendarMonth &&
     d.year===calendarYear &&
-    !r.done;
+    !r.done
+   ){
+    events+=`
+     <div class="muted">
+      <span class="cal-dot red"></span>
+      ${r.time||''} ${r.title||'Recordatorio'}
+     </div>`;
+   }
   });
 
-  const maintenance=state.maintenance.filter(m=>{
+  maintenance.forEach(m=>{
    const d=parseAppDate(m.next);
-   return d &&
+
+   if(
+    d &&
     d.day===day &&
     d.month===calendarMonth &&
-    d.year===calendarYear;
-  });
-
-  let content='';
-
-  jobs.slice(0,3).forEach(j=>{
-   content+=`<div class="muted">
-    <span class="cal-dot green"></span>
-    ${j.time} ${j.type}
-   </div>`;
-  });
-
-  reminders.slice(0,2).forEach(r=>{
-   content+=`<div class="muted">
-    <span class="cal-dot red"></span>
-    ${r.time} ${r.title}
-   </div>`;
-  });
-
-  maintenance.slice(0,2).forEach(m=>{
-   content+=`<div class="muted">
-    <span class="cal-dot orange"></span>
-    ${m.title}
-   </div>`;
+    d.year===calendarYear
+   ){
+    events+=`
+     <div class="muted">
+      <span class="cal-dot orange"></span>
+      ${m.title||'Mantenimiento'}
+     </div>`;
+   }
   });
 
   cells+=`
    <div class="cal-cell">
     <div class="cal-day">${day}</div>
-    ${content}
+    ${events}
    </div>`;
  }
 
  $('#view-calendario').innerHTML=`
+
   <div class="page-head">
+
    <h1>📅 Calendario</h1>
 
    <div class="actions">
-    <button class="btn secondary" onclick="calendarPrev()">‹</button>
+
+    <button class="btn secondary" onclick="calendarPrev()">
+     ‹ Anterior
+    </button>
 
     <button class="btn secondary" onclick="calendarToday()">
      Hoy
     </button>
 
-    <button class="btn secondary" onclick="calendarNext()">›</button>
+    <button class="btn secondary" onclick="calendarNext()">
+     Siguiente ›
+    </button>
 
     <button class="btn" onclick="openForm('job')">
      ＋ Trabajo
@@ -478,6 +495,7 @@ function renderCalendario(){
     <button class="btn secondary" onclick="openForm('maintenance')">
      🔧 Mantenimiento
     </button>
+
    </div>
   </div>
 
@@ -513,71 +531,23 @@ function renderCalendario(){
    </div>
 
    <div class="calendar-grid">
+
     ${dias.map(d=>`
      <div class="cal-cell">
       <div class="cal-head">${d}</div>
      </div>
     `).join('')}
+
    </div>
 
    <div class="calendar-grid">
+
     ${cells}
+
    </div>
 
   </div>
  `;
-}
-
-function calendarPrev(){
-
- calendarMonth--;
-
- if(calendarMonth<0){
-  calendarMonth=11;
-  calendarYear--;
- }
-
- renderCalendario();
-}
-
-function calendarNext(){
-
- calendarMonth++;
-
- if(calendarMonth>11){
-  calendarMonth=0;
-  calendarYear++;
- }
-
- renderCalendario();
-}
-
-function calendarToday(){
-
- const now=new Date();
-
- calendarYear=now.getFullYear();
- calendarMonth=now.getMonth();
-
- renderCalendario();
-}
-
-function calendarChangeMonth(value){
-
- calendarMonth=Number(value);
-
- renderCalendario();
-}
-
-function calendarChangeYear(value){
-
- calendarYear=Number(value);
-
- if(!Number.isFinite(calendarYear)){
-  calendarYear=new Date().getFullYear();
- }
-
- renderCalendario();
 }
 function renderClientes(){
  $('#view-clientes').innerHTML=`<div class="page-head"><h1>👥 Clientes</h1><button class="btn" onclick="openForm('client')">＋ Nuevo cliente</button></div><div class="cards">${state.clients.map((c,i)=>`<div class="client-card"><h3>${c.name}</h3><div class="muted">${c.phone} · ${c.email||''}</div><p>${c.address||''}</p><b>${c.jobs}</b> trabajos · <b>${c.maint}</b> mantenimientos<div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="editClient(${i})">Editar</button><button class="btn danger" onclick="deleteItem('clients',${i},'Cliente')">Eliminar</button></div></div>`).join('')}</div>`
