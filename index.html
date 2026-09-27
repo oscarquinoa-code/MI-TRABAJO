@@ -170,6 +170,15 @@ if (
   });
   save();
 }
+ if (!state.modules.some(m => m.id === 'calendario')) {
+  state.modules.splice(2, 0, {
+    id:'calendario',
+    label:'Calendario',
+    icon:'▣',
+    visible:true
+  });
+  save();
+}
 if(!Array.isArray(state.banco)){
  state.banco=[];
 }
