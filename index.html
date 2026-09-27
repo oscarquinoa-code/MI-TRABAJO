@@ -144,10 +144,18 @@ try {
 if (
   !state ||
   typeof state !== 'object' ||
-  !Array.isArray(state.modules) ||
   !state.theme ||
+  !Array.isArray(state.modules) ||
+  !Array.isArray(state.dashboard) ||
+  !Array.isArray(state.clients) ||
   !Array.isArray(state.jobs) ||
-  !Array.isArray(state.clients)
+  !Array.isArray(state.maintenance) ||
+  !Array.isArray(state.pendingInvoice) ||
+  !Array.isArray(state.bank) ||
+  !Array.isArray(state.expenses) ||
+  !Array.isArray(state.reminders) ||
+  !Array.isArray(state.puerto) ||
+  !state.categories
 ) {
   state = JSON.parse(JSON.stringify(defaultState));
 }
