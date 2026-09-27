@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#087f6d">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Mi Trabajo — Jardinería & Puerto</title>
+<style>
+:root{
+ --primary:#07966a;--primary-dark:#075b50;--nav:#063a39;--bg:#f4f7f8;--card:#fff;
+ --text:#17353a;--muted:#71888e;--line:#e1e9eb;--danger:#e35d60;--warning:#f19a25;
+ --blue:#1977e8;--purple:#6a4bd2;--teal:#087f7f;--shadow:0 3px 16px rgba(18,52,56,.07);
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:flex}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:linear-gradient(180deg,#063d3b,#052e30);color:#fff;padding:16px 11px;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 10px 20px}.brand-mark{font-size:34px}.brand b{display:block;font-size:18px}.brand small{opacity:.72}
+.nav{display:flex;flex-direction:column;gap:3px}.nav button{width:100%;border:0;background:transparent;color:#fff;border-radius:9px;padding:11px 13px;display:flex;gap:12px;align-items:center;text-align:left}.nav button:hover,.nav button.active{background:var(--primary)}.nav .badge{margin-left:auto;background:#f6a623;color:#fff;border-radius:12px;padding:2px 7px;font-size:10px}.nav .icon{width:23px;text-align:center}
+.main{margin-left:250px;min-width:0;flex:1}.topbar{height:64px;display:flex;justify-content:space-between;align-items:center;padding:0 20px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}.topbar-left{display:flex;align-items:center;gap:10px;font-weight:800}.topbar-left .month{font-size:18px}.topbar-right{display:flex;align-items:center;gap:10px}.search{width:230px;padding:10px 13px;border:1px solid var(--line);border-radius:20px}.avatar{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:#118aa0;color:#fff;font-weight:800}
+.content{max-width:1700px;margin:auto;padding:18px}.page-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.page-head h1{font-size:22px;margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:800}.btn.secondary{background:#edf3f3;color:#245a5a}.btn.danger{background:var(--danger)}.btn.warning{background:var(--warning)}
+.view{display:none}.view.active{display:block}.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.metric{border-radius:10px;padding:15px 16px;min-height:112px;color:#fff;box-shadow:var(--shadow)}.metric:nth-child(6n+1){background:#0a9a70}.metric:nth-child(6n+2){background:#1977e8}.metric:nth-child(6n+3){background:#6a4bd2}.metric:nth-child(6n+4){background:#f08c21}.metric:nth-child(6n+5){background:#e35d60}.metric:nth-child(6n){background:#087f7f}.metric .label{font-size:13px;font-weight:800}.metric strong{display:block;font-size:25px;margin:10px 0 7px}.metric small{opacity:.9}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.fourcol{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:var(--shadow)}.card h3{margin:0;font-size:16px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.mini-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.mini{padding:10px;border-radius:8px;background:#f6fafb}.mini small{color:var(--muted)}.mini b{display:block;margin-top:7px}
+.list{display:flex;flex-direction:column}.row{display:flex;justify-content:space-between;gap:12px;padding:10px 1px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.muted{color:var(--muted);font-size:12px}.tag{display:inline-block;padding:4px 8px;border-radius:12px;font-size:11px;font-weight:800;background:#e4f8ed;color:#0b8150;white-space:nowrap}.tag.pending{background:#fff0dc;color:#b36b00}.tag.high{background:#ffe2e3;color:#b93d43}.tag.blue{background:#e8f1ff;color:#2166c1}
+.table{width:100%;border-collapse:collapse}.table th,.table td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{font-size:11px;color:var(--muted);text-transform:uppercase}.table tbody tr:hover{background:#fafcfc}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.client-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px;box-shadow:var(--shadow)}
+.notice{padding:12px;border-left:4px solid var(--primary);background:#edf9f5;border-radius:7px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:800;color:#48656b}.field input,.field select,.field textarea{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}.field textarea{min-height:100px;resize:vertical}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-right:0;border-bottom:0}.cal-cell{min-height:90px;background:#fff;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px}.cal-head{font-size:11px;color:var(--muted);font-weight:800}.cal-day{font-size:12px;font-weight:800}.cal-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px}.green{background:#0a9a70}.orange{background:#f08c21}.red{background:#e35d60}.blue{background:#1977e8}
+.settings{display:grid;grid-template-columns:260px 1fr;gap:12px}.setting-menu button{width:100%;text-align:left;border:0;background:#fff;padding:12px;border-bottom:1px solid var(--line)}.setting-menu button.active{border-left:3px solid var(--primary);color:var(--primary);font-weight:800}.swatches{display:flex;gap:10px}.swatch{width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px #cad5d8}.swatch[data-c="#07966a"]{background:#07966a}.swatch[data-c="#1977e8"]{background:#1977e8}.swatch[data-c="#6a4bd2"]{background:#6a4bd2}.swatch[data-c="#f08c21"]{background:#f08c21}.swatch[data-c="#087f7f"]{background:#087f7f}
+.check-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check-line{padding:9px;background:#f7fafb;border:1px solid var(--line);border-radius:7px}.drag-list{display:flex;flex-direction:column;gap:8px}.drag-item{background:#f7fafb;border:1px solid var(--line);padding:10px;border-radius:8px;display:flex;align-items:center;gap:10px}.drag-item .grip{cursor:grab;font-size:18px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;place-items:center;z-index:50}.modal{width:min(600px,92vw);max-height:90vh;overflow:auto;background:#fff;border-radius:12px;padding:18px;box-shadow:0 20px 60px #0004}.modal.show{display:grid}
+.toast{position:fixed;right:18px;bottom:18px;background:#173b3d;color:#fff;padding:11px 14px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s;z-index:100}.toast.show{opacity:1;transform:translateY(0)}
+.footer-note{font-size:11px;color:var(--muted);margin-top:14px}
+@media(max-width:1200px){.grid6{grid-template-columns:repeat(3,1fr)}.fourcol{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:850px){.sidebar{width:70px}.brand div:not(.brand-mark),.nav button span.label{display:none}.main{margin-left:70px}.content{padding:12px}.grid6,.twocol,.fourcol,.cards,.form-grid,.settings{grid-template-columns:1fr}.mini-grid{grid-template-columns:repeat(2,1fr)}.search{width:140px}.topbar{padding:0 10px}.calendar-grid{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand"><div class="brand-mark">🌿</div><div><b>Mi Trabajo</b><small>Jardinería & Puerto</small></div></div>
+ <div class="nav" id="nav"></div>
+</aside>
+<main class="main">
+<header class="topbar"><div class="topbar-left">📅 <span class="month">Septiembre 2026</span></div><div class="topbar-right"><input class="search" id="search" placeholder="🔎 Buscar..."><span>☀️</span><span>🔔</span><div class="avatar">OP</div></div></header>
+<div class="content">
+ <section class="view active" id="view-inicio"></section>
+ <section class="view" id="view-trabajos"></section>
+ <section class="view" id="view-calendario"></section>
+ <section class="view" id="view-clientes"></section>
+ <section class="view" id="view-puerto"></section>
+ <section class="view" id="view-mantenimiento"></section>
+ <section class="view" id="view-facturar"></section>
+ <section class="view" id="view-cobros"></section>
+ <section class="view" id="view-gastos"></section>
+ <section class="view" id="view-recordatorios"></section>
+ <section class="view" id="view-informes"></section>
+ <section class="view" id="view-config"></section>
+</div>
+</main>
+</div>
+<div class="modal-backdrop" id="modalWrap"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const defaultState={
+ theme:{primary:'#07966a',radius:10,dark:false},
+ modules:[
+  {id:'inicio',label:'Inicio',icon:'⌂',visible:true},
+  {id:'trabajos',label:'Trabajos',icon:'🛠️',visible:true},
+  {id:'calendario',label:'Calendario',icon:'▣',visible:true},
+  {id:'clientes',label:'Clientes',icon:'♟',visible:true},
+  {id:'puerto',label:'Puerto',icon:'⚓',visible:true},
+  {id:'mantenimiento',label:'Mantenimientos',icon:'🔧',visible:true},
+  {id:'facturar',label:'Pendiente de facturar',icon:'📄',visible:true},
+  {id:'cobros',label:'Ingresos / Cobros',icon:'🏦',visible:true},
+  {id:'gastos',label:'Gastos',icon:'💸',visible:true},
+  {id:'recordatorios',label:'Recordatorios',icon:'🔔',visible:true},
+  {id:'informes',label:'Informes',icon:'📊',visible:true},
+  {id:'config',label:'Personalización',icon:'⚙️',visible:true}
+ ],
+ dashboard:[
+  {id:'financial',label:'Resumen financiero',visible:true},
+  {id:'calendar',label:'Calendario',visible:true},
+  {id:'pendingInvoice',label:'Pendiente de facturar',visible:true},
+  {id:'today',label:'Hoy',visible:true},
+  {id:'reminders',label:'Recordatorios',visible:true},
+  {id:'clients',label:'Clientes',visible:true},
+  {id:'maintenance',label:'Mantenimientos',visible:true},
+  {id:'bank',label:'Ingresos en banco',visible:true}
+ ],
+ categories:{expense:['Materiales','Combustible','Herramientas','Viajes','Reparaciones','Fijos','General'],job:['Corte de césped','Poda','Riego','Mantenimiento','Limpieza','Otro'],status:['Pendiente','En curso','Realizado','Cancelado'],priority:['Alta','Media','Baja']},
+ customFields:[],
+ clients:[
+  {id:1,name:'Juan Pérez',phone:'600 111 222',email:'juan@email.es',address:'Santiago',jobs:2,maint:1},
+  {id:2,name:'María López',phone:'611 222 333',email:'maria@email.es',address:'Ames',jobs:3,maint:2},
+  {id:3,name:'Restaurante Sol',phone:'622 333 444',email:'gerencia@sol.es',address:'Porto',jobs:1,maint:0},
+  {id:4,name:'Antonio Castro',phone:'633 444 555',email:'antonio@email.es',address:'Vigo',jobs:4,maint:1}
+ ],
+ jobs:[
+  {id:1,date:'16/09/2026',time:'08:00',client:'Juan Pérez',type:'Corte de césped',area:'Jardinería',hours:3,amount:450,status:'En curso',description:'Corte y limpieza'},
+  {id:2,date:'16/09/2026',time:'14:00',client:'Puerto Vigo',type:'Limpieza muelle',area:'Puerto',hours:6,amount:280,status:'Pendiente',description:'Limpieza muelle'},
+  {id:3,date:'15/09/2026',time:'10:30',client:'María López',type:'Poda',area:'Jardinería',hours:2,amount:320,status:'Realizado',description:'Poda de setos'}
+ ],
+ maintenance:[
+  {id:1,title:'Corte de césped',client:'Juan Pérez',freq:'Cada 15 días',next:'25/09/2026',status:'Pendiente',amount:120},
+  {id:2,title:'Poda de setos',client:'María López',freq:'Mensual',next:'10/10/2026',status:'Pendiente',amount:180},
+  {id:3,title:'Revisión sistema riego',client:'Restaurante Sol',freq:'Trimestral',next:'01/11/2026',status:'Realizado',amount:250}
+ ],
+ pendingInvoice:[
+  {id:1,date:'15/09/2026',client:'Juan Pérez',work:'Poda y limpieza',amount:350},
+  {id:2,date:'14/09/2026',client:'María López',work:'Corte de césped',amount:180},
+  {id:3,date:'12/09/2026',client:'Restaurante Sol',work:'Mantenimiento jardín',amount:420}
+ ],
+ bank:[
+  {id:1,date:'16/09/2026',client:'Juan Pérez',invoice:'F-1023',amount:600,status:'Ingresado'},
+  {id:2,date:'14/09/2026',client:'María López',invoice:'F-1018',amount:450,status:'Pendiente'},
+  {id:3,date:'10/09/2026',client:'Restaurante Sol',invoice:'F-1012',amount:800,status:'Ingresado'}
+ ],
+ expenses:[
+  {id:1,date:'16/09/2026',concept:'Gasóleo',category:'Combustible',amount:85,type:'Variable'},
+  {id:2,date:'14/09/2026',concept:'Material jardín',category:'Materiales',amount:160,type:'Variable'},
+  {id:3,date:'01/09/2026',concept:'Seguro vehículo',category:'Fijos',amount:45,type:'Fijo'}
+ ],
+ reminders:[
+  {id:1,date:'16/09/2026',time:'17:00',title:'Llamar al proveedor',priority:'Alta',repeat:'No repetir',done:false},
+  {id:2,date:'18/09/2026',time:'09:00',title:'Revisar presupuesto de Juan Pérez',priority:'Media',repeat:'No repetir',done:false},
+  {id:3,date:'20/09/2026',time:'12:00',title:'Llamar a cliente',priority:'Baja',repeat:'Semanal',done:false}
+ ],
+ puerto:[
+  {id:1,date:'16/09/2026',shift:'08:00–14:00',hours:6,foreman:'Carlos',operation:'Muelles',work:'Limpieza muelle',amount:120,note:''},
+  {id:2,date:'15/09/2026',shift:'08:00–16:00',hours:8,foreman:'Manuel',operation:'Carga',work:'Operativa de carga',amount:160,note:''}
+ ],
+ cash:1200
+};
+let state=JSON.parse(localStorage.getItem('mitrabajo_final')||'null')||defaultState;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const money=n=>Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
+const sum=(a,k)=>a.reduce((s,x)=>s+Number(x[k]||0),0);
+function save(){localStorage.setItem('mitrabajo_final',JSON.stringify(state))}
+function uid(){return Date.now()+Math.floor(Math.random()*1000)}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function applyTheme(){document.documentElement.style.setProperty('--primary',state.theme.primary);document.documentElement.style.setProperty('--radius',state.theme.radius+'px');document.querySelector('meta[name="theme-color"]').setAttribute('content',state.theme.primary)}
+function navRender(){
+ const nav=$('#nav');nav.innerHTML='';
+ state.modules.filter(m=>m.visible).forEach(m=>{
+  const b=document.createElement('button');b.dataset.id=m.id;b.innerHTML=`<span class="icon">${m.icon}</span><span class="label">${m.label}</span>`;
+  if(m.id==='facturar'&&state.pendingInvoice.length)b.innerHTML+=`<span class="badge">${state.pendingInvoice.length}</span>`;
+  if(m.id==='recordatorios'&&state.reminders.filter(r=>!r.done).length)b.innerHTML+=`<span class="badge">${state.reminders.filter(r=>!r.done).length}</span>`;
+  b.onclick=()=>show(m.id);nav.appendChild(b)
+ })
+}
+function metric(label,val,icon){return `<div class="metric"><div class="label">${icon||''} ${label}</div><strong>${val}</strong><small>Actualizado automáticamente</small></div>`}
+function show(id){
+ $$('.view').forEach(v=>v.classList.remove('active'));$('#view-'+id).classList.add('active');
+ $$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+ render(id)
+}
+function mini(a,b){return `<div class="mini"><small>${a}</small><b>${b}</b></div>`}
+function panel(id,title,body,action=''){return state.dashboard.find(x=>x.id===id)?.visible?`<div class="card"><div class="card-head"><h3>${title}</h3>${action}</div>${body}</div>`:''}
+function renderInicio(){
+ const fact=sum(state.pendingInvoice,'amount')+sum(state.bank,'amount');
+ const cobrado=sum(state.bank.filter(x=>x.status==='Ingresado'),'amount');
+ const pendingCash=sum(state.bank.filter(x=>x.status==='Pendiente'),'amount');
+ const expenses=sum(state.expenses,'amount');
+ const pFact=sum(state.pendingInvoice,'amount');
+ const beneficio=fact+state.cash-expenses-pFact;
+ const todayRem=state.reminders.filter(r=>r.date==='16/09/2026'&&!r.done);
+ const bodyFinancial=`<div class="mini-grid">${mini('Facturado',money(fact))}${mini('Pendiente de facturar',money(pFact))}${mini('En mano',money(state.cash))}${mini('Pendiente de cobro',money(pendingCash))}${mini('Ingresado banco',money(cobrado))}</div><div style="margin-top:8px">${mini('Beneficio',money(beneficio))}</div>`;
+ const cal=`<div class="notice">📅 Septiembre 2026 · 16 de septiembre seleccionado</div><div style="margin-top:10px" class="muted">8 🟢 trabajos · 3 🔵 mantenimientos · 3 🔴 recordatorios</div>`;
+ const pfi=state.pendingInvoice.slice(0,5).map((x,i)=>`<div class="row"><span><b>${x.client}</b><div class="muted">${x.work}</div></span><span><b>${money(x.amount)}</b><button class="btn" style="margin-left:8px;padding:5px 8px" onclick="facturar(${i})">Facturar</button></span></div>`).join('');
+ const today=state.jobs.filter(x=>x.date==='16/09/2026').map(x=>`<div class="row"><span><b>${x.time} · ${x.type}</b><div class="muted">${x.client} · ${x.area}</div></span><span class="tag ${x.status==='Pendiente'?'pending':''}">${x.status}</span></div>`).join('')+todayRem.map(r=>`<div class="row"><span><b>${r.time} · 🔔 ${r.title}</b><div class="muted">Prioridad ${r.priority}</div></span><span class="tag ${r.priority==='Alta'?'high':''}">Hoy</span></div>`).join('');
+ const rem=state.reminders.slice(0,4).map((r,i)=>`<div class="row"><span><b>${r.time} · ${r.title}</b><div class="muted">${r.date} · ${r.repeat}</div></span><span class="tag ${r.priority==='Alta'?'high':''}">${r.priority}</span></div>`).join('');
+ const clients=state.clients.slice(0,5).map(c=>`<div class="row"><span><b>${c.name}</b><div class="muted">${c.jobs} trabajos · ${c.maint} mantenimientos</div></span><span>›</span></div>`).join('');
+ const maint=state.maintenance.slice(0,4).map(x=>`<div class="row"><span><b>${x.title}</b><div class="muted">${x.client} · ${x.freq} · Próx. ${x.next}</div></span><span class="tag ${x.status==='Realizado'?'':'pending'}">${x.status}</span></div>`).join('');
+ const bank=state.bank.slice(0,4).map(x=>`<div class="row"><span>${x.client}<div class="muted">${x.date} · ${x.invoice}</div></span><span><b>${money(x.amount)}</b><div class="tag ${x.status==='Pendiente'?'pending':''}">${x.status}</div></span></div>`).join('');
+ $('#view-inicio').innerHTML=`<div class="page-head"><h1>Inicio</h1><div class="actions"><button class="btn" onclick="openForm('job')">＋ Nuevo trabajo</button><button class="btn secondary" onclick="openForm('reminder')">🔔 Recordatorio</button></div></div>
+ <div class="grid6">${metric('Facturado',money(fact),'🧾')}${metric('Pendiente de facturar',money(pFact),'📄')}${metric('En mano',money(state.cash),'💶')}${metric('Pendiente de cobro',money(pendingCash),'🕐')}${metric('Gastos',money(expenses),'💸')}${metric('Beneficio',money(beneficio),'📈')}</div>
+ <div class="twocol" style="margin-top:12px">
+ ${panel('financial','📊 Resumen financiero',bodyFinancial)}
+ ${panel('calendar','📅 Calendario',cal,`<button class="btn secondary" onclick="show('calendario')">Ver calendario</button>`)}
+ </div>
+ <div class="twocol">
+ ${panel('pendingInvoice','📄 Pendiente de facturar',pfi||'<div class="muted">No hay trabajos pendientes de facturar.</div>',`<button class="btn secondary" onclick="show('facturar')">Ver todos</button>`)}
+ ${panel('today','📅 Hoy',today||'<div class="muted">No hay eventos.</div>',`<button class="btn secondary" onclick="show('calendario')">Calendario</button>`)}
+ </div>
+ <div class="fourcol">
+ ${panel('reminders','🔔 Recordatorios',rem||'<div class="muted">Sin recordatorios</div>',`<button class="btn secondary" onclick="show('recordatorios')">Ver todos</button>`)}
+ ${panel('clients','👥 Clientes',clients,`<button class="btn secondary" onclick="show('clientes')">Ver todos</button>`)}
+ ${panel('maintenance','🔧 Mantenimientos',maint,`<button class="btn" onclick="openForm('maintenance')">＋ Nuevo</button>`)}
+ ${panel('bank','🏦 Ingresos en banco',bank,`<button class="btn secondary" onclick="show('cobros')">Ver todos</button>`)}
+ </div>`;
+}
+function tableHeaders(arr){return `<tr>${arr.map(x=>`<th>${x}</th>`).join('')}</tr>`}
+function renderTrabajos(){
+ $('#view-trabajos').innerHTML=`<div class="page-head"><h1>🛠️ Trabajos</h1><button class="btn" onclick="openForm('job')">＋ Nuevo trabajo</button></div>
+ <div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Hora','Cliente','Trabajo','Área','Horas','Importe','Estado','Acciones'])}</thead><tbody>${state.jobs.map((j,i)=>`<tr><td>${j.date}</td><td>${j.time}</td><td>${j.client}</td><td>${j.type}<div class="muted">${j.description}</div></td><td>${j.area}</td><td>${j.hours} h</td><td>${money(j.amount)}</td><td><span class="tag ${j.status==='Pendiente'?'pending':''}">${j.status}</span></td><td><button class="btn secondary" onclick="deleteItem('jobs',${i},'Trabajos')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
+}
+function renderCalendario(){
+ const cells=[]; for(let i=1;i<=30;i++){const ev=state.jobs.filter(j=>Number(j.date.slice(0,2))===i);const rm=state.reminders.filter(r=>Number(r.date.slice(0,2))===i&&!r.done);cells.push(`<div class="cal-cell"><div class="cal-day">${i}</div>${ev.slice(0,2).map(e=>`<div class="muted"><span class="cal-dot green"></span>${e.time} ${e.type}</div>`).join('')}${rm.slice(0,2).map(e=>`<div class="muted"><span class="cal-dot red"></span>${e.time} ${e.title}</div>`).join('')}</div>`)}
+ $('#view-calendario').innerHTML=`<div class="page-head"><h1>📅 Calendario</h1><div class="actions"><button class="btn" onclick="openForm('job')">＋ Trabajo</button><button class="btn secondary" onclick="openForm('reminder')">🔔 Recordatorio</button><button class="btn secondary" onclick="openForm('maintenance')">🔧 Mantenimiento</button></div></div>
+ <div class="card"><div class="card-head"><h3>Septiembre 2026</h3><div class="muted">L M X J V S D</div></div><div class="calendar-grid">${cells.join('')}</div></div>`
+}
+function renderClientes(){
+ $('#view-clientes').innerHTML=`<div class="page-head"><h1>👥 Clientes</h1><button class="btn" onclick="openForm('client')">＋ Nuevo cliente</button></div><div class="cards">${state.clients.map((c,i)=>`<div class="client-card"><h3>${c.name}</h3><div class="muted">${c.phone} · ${c.email||''}</div><p>${c.address||''}</p><b>${c.jobs}</b> trabajos · <b>${c.maint}</b> mantenimientos<div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="editClient(${i})">Editar</button><button class="btn danger" onclick="deleteItem('clients',${i},'Cliente')">Eliminar</button></div></div>`).join('')}</div>`
+}
+function renderPuerto(){
+ $('#view-puerto').innerHTML=`<div class="page-head"><h1>⚓ Puerto</h1><button class="btn" onclick="openForm('puerto')">＋ Nuevo turno</button></div><div class="grid6">${metric('Horas',sum(state.puerto,'hours')+' h','⏱️')}${metric('Ingresos',money(sum(state.puerto,'amount')),'💶')}${metric('Turnos',state.puerto.length,'📋')}</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Turno','Horas','Capataz','Operativa','Trabajo','€','Acciones'])}</thead><tbody>${state.puerto.map((p,i)=>`<tr><td>${p.date}</td><td>${p.shift}</td><td>${p.hours}</td><td>${p.foreman}</td><td>${p.operation}</td><td>${p.work}</td><td>${money(p.amount)}</td><td><button class="btn danger" onclick="deleteItem('puerto',${i},'Turno')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
+}
+function renderMantenimiento(){
+ $('#view-mantenimiento').innerHTML=`<div class="page-head"><h1>🔧 Mantenimientos</h1><button class="btn" onclick="openForm('maintenance')">＋ Nuevo mantenimiento</button></div><div class="card"><table class="table"><thead>${tableHeaders(['Mantenimiento','Cliente','Periodicidad','Próxima','Estado','Importe','Acciones'])}</thead><tbody>${state.maintenance.map((m,i)=>`<tr><td>${m.title}</td><td>${m.client}</td><td>${m.freq}</td><td>${m.next}</td><td><span class="tag ${m.status==='Realizado'?'':'pending'}">${m.status}</span></td><td>${money(m.amount)}</td><td><button class="btn secondary" onclick="toggleMaintenance(${i})">${m.status==='Realizado'?'Pendiente':'Realizado'}</button> <button class="btn danger" onclick="deleteItem('maintenance',${i},'Mantenimiento')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
+}
+function renderFacturar(){
+ $('#view-facturar').innerHTML=`<div class="page-head"><h1>📄 Pendiente de facturar</h1><button class="btn" onclick="openForm('pendingInvoice')">＋ Añadir trabajo</button></div><div class="grid6">${metric('Pendiente de facturar',money(sum(state.pendingInvoice,'amount')),'📄')}${metric('Trabajos',state.pendingInvoice.length,'🧾')}</div><br><div class="notice">Un trabajo realizado puede permanecer aquí hasta que emitas su factura. Al pulsar <b>Facturar</b>, pasa automáticamente a “Ingresos / Cobros” como pendiente de cobro.</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Cliente','Trabajo','Importe','Acción'])}</thead><tbody>${state.pendingInvoice.map((x,i)=>`<tr><td>${x.date}</td><td>${x.client}</td><td>${x.work}</td><td>${money(x.amount)}</td><td><button class="btn" onclick="facturar(${i})">Facturar</button> <button class="btn danger" onclick="deleteItem('pendingInvoice',${i},'Pendiente')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
+}
+function renderCobros(){
+ const ing=sum(state.bank.filter(x=>x.status==='Ingresado'),'amount'), pen=sum(state.bank.filter(x=>x.status==='Pendiente'),'amount');
+ $('#view-cobros').innerHTML=`<div class="page-head"><h1>🏦 Ingresos / Cobros</h1><button class="btn" onclick="openForm('bank')">＋ Añadir</button></div><div class="grid6">${metric('Ingresado',money(ing),'🏦')}${metric('Pendiente de cobro',money(pen),'🕐')}${metric('Total',money(ing+pen),'💶')}</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Cliente','Factura','Importe','Estado','Acción'])}</thead><tbody>${state.bank.map((x,i)=>`<tr><td>${x.date}</td><td>${x.client}</td><td>${x.invoice}</td><td>${money(x.amount)}</td><td><span class="tag ${x.status==='Pendiente'?'pending':''}">${x.status}</span></td><td>${x.status==='Pendiente'?`<button class="btn" onclick="markCollected(${i})">Marcar cobrado</button>`:''} <button class="btn danger" onclick="deleteItem('bank',${i},'Cobro')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
+}
+function renderGastos(){
+ $('#view-gastos').innerHTML=`<div class="page-head"><h1>💸 Gastos</h1><button class="btn" onclick="openForm('expense')">＋ Nuevo gasto</button></div><div class="grid6">${metric('Variables',money(sum(state.expenses.filter(x=>x.type==='Variable'),'amount')))}${metric('Fijos',money(sum(state.expenses.filter(x=>x.type==='Fijo'),'amount')))}${metric('Total',money(sum(state.expenses,'amount')))}</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Concepto','Categoría','Tipo','Importe','Acción'])}</thead><tbody>${state.expenses.map((x,i)=>`<tr><td>${x.date}</td><td>${x.concept}</td><td>${x.category}</td><td>${x.type}</td><td>${money(x.amount)}</td><td><button class="btn danger" onclick="deleteItem('expenses',${i},'Gasto')">Eliminar</button></td></tr>`).join('')}</tbody></table></div>`
+}
+function renderRecordatorios(){
+ $('#view-recordatorios').innerHTML=`<div class="page-head"><h1>🔔 Recordatorios</h1><button class="btn" onclick="openForm('reminder')">＋ Nuevo recordatorio</button></div><div class="grid6">${metric('Pendientes',state.reminders.filter(r=>!r.done).length,'🔔')}${metric('Alta prioridad',state.reminders.filter(r=>!r.done&&r.priority==='Alta').length,'🚨')}</div><br><div class="card"><table class="table"><thead>${tableHeaders(['Fecha','Hora','Recordatorio','Prioridad','Repetición','Estado','Acción'])}</thead><tbody>${state.reminders.map((r,i)=>`<tr style="${r.done?'opacity:.55':''}"><td>${r.date}</td><td>${r.time}</td><td>${r.title}</td><td><span class="tag ${r.priority==='Alta'?'high':''}">${r.priority}</span></td><td>${r.repeat}</td><td><span class="tag ${r.done?'':'pending'}">${r.done?'Realizado':'Pendiente'}</span></td><td><button class="btn secondary" onclick="toggleReminder(${i})">${r.done?'Reabrir':'Hecho'}</button> <button class="btn danger" onclick="deleteItem('reminders',${i},'Recordatorio')">Eliminar</button></td></tr>`).join('')}</tbody></table></div><div class="footer-note">Las notificaciones del sistema Android se habilitarán al instalar esta PWA desde un servidor HTTPS y conectar el módulo de notificaciones.</div>`
+}
+function renderInformes(){
+ const fact=sum(state.pendingInvoice,'amount')+sum(state.bank,'amount'), gastos=sum(state.expenses,'amount'), horas=sum(state.jobs,'hours')+sum(state.puerto,'hours');
+ $('#view-informes').innerHTML=`<div class="page-head"><h1>📊 Informes</h1><div class="actions"><button class="btn secondary" onclick="exportData()">Exportar datos</button><button class="btn secondary" onclick="window.print()">Imprimir</button></div></div><div class="cards"><div class="card"><h3>Facturado</h3><div style="font-size:34px;font-weight:900">${money(fact)}</div></div><div class="card"><h3>Gastos</h3><div style="font-size:34px;font-weight:900">${money(gastos)}</div></div><div class="card"><h3>Horas</h3><div style="font-size:34px;font-weight:900">${horas} h</div></div></div><br><div class="notice">Los informes se calculan a partir de los registros de la aplicación y respetan las categorías y campos que tengas configurados.</div>`
+}
+function renderConfig(){
+ const modules=state.modules.map((m,i)=>`<div class="drag-item" draggable="true" data-i="${i}"><span class="grip">☷</span><span style="flex:1">${m.icon} ${m.label}</span><button class="btn secondary" onclick="editModule(${i})">Editar</button><label><input type="checkbox" ${m.visible?'checked':''} onchange="toggleModule(${i},this.checked)"> Visible</label></div>`).join('');
+ $('#view-config').innerHTML=`<div class="page-head"><h1>⚙️ Personalización</h1><div class="actions"><button class="btn secondary" onclick="exportData()">Exportar</button><button class="btn secondary" onclick="importData()">Importar</button><button class="btn danger" onclick="resetApp()">Restablecer</button></div></div>
+ <div class="settings"><div class="card setting-menu"><button class="active">🎨 Apariencia</button><button onclick="scrollToId('moduleSettings')">🧩 Módulos y menú</button><button onclick="scrollToId('fieldSettings')">📝 Campos personalizados</button><button onclick="scrollToId('categorySettings')">📂 Categorías y estados</button><button onclick="scrollToId('dashboardSettings')">🏠 Inicio</button><button onclick="scrollToId('dataSettings')">💾 Datos</button></div>
+ <div class="card">
+ <h3>Apariencia</h3><p class="muted">La configuración se guarda automáticamente en este dispositivo.</p>
+ <h4>Color principal</h4><div class="swatches">${['#07966a','#1977e8','#6a4bd2','#f08c21','#087f7f'].map(c=>`<button class="swatch" data-c="${c}" onclick="setTheme('${c}')"></button>`).join('')}</div>
+ <h4>Redondeo</h4><input type="range" min="0" max="20" value="${state.theme.radius}" oninput="setRadius(this.value)"> ${state.theme.radius}px
+ <hr id="moduleSettings"><h3>🧩 Módulos y menú</h3><p class="muted">Edita nombres, iconos y visibilidad. El orden se puede cambiar arrastrando.</p><div class="drag-list">${modules}</div>
+ <br><button class="btn secondary" onclick="addModule()">＋ Crear módulo</button>
+ <hr id="fieldSettings"><h3>📝 Campos personalizados</h3><div id="fieldList">${state.customFields.map((f,i)=>`<div class="row"><span><b>${f.name}</b><div class="muted">${f.type}${f.required?' · obligatorio':''}</div></span><button class="btn danger" onclick="deleteCustomField(${i})">Eliminar</button></div>`).join('')||'<div class="muted">Todavía no hay campos personalizados.</div>'}</div><br><button class="btn" onclick="addCustomField()">＋ Crear campo</button>
+ <hr id="categorySettings"><h3>📂 Categorías y estados</h3><div class="form-grid">${Object.entries(state.categories).map(([k,vals])=>`<div class="field"><label>${k}</label><input value="${vals.join(', ')}" onchange="updateCategory('${k}',this.value)"></div>`).join('')}</div>
+ <hr id="dashboardSettings"><h3>🏠 Bloques de Inicio</h3>${state.dashboard.map((d,i)=>`<div class="check-line"><label><input type="checkbox" ${d.visible?'checked':''} onchange="toggleDashboard(${i},this.checked)"> ${d.label}</label></div>`).join('')}
+ <hr id="dataSettings"><h3>💾 Datos</h3><div class="notice">Puedes exportar una copia JSON de todos tus datos o importarla posteriormente en este mismo navegador.</div>
+ </div></div>`
+}
+function scrollToId(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
+function setTheme(c){state.theme.primary=c;save();applyTheme();renderConfig();navRender();toast('Color actualizado')}
+function setRadius(v){state.theme.radius=Number(v);save();document.documentElement.style.setProperty('--radius',v+'px');document.querySelectorAll('.card,.metric,.client-card').forEach(x=>x.style.borderRadius=v+'px')}
+function toggleModule(i,v){state.modules[i].visible=v;save();navRender();renderConfig()}
+function editModule(i){const m=state.modules[i], label=prompt('Nombre del módulo',m.label);if(label===null)return;const icon=prompt('Icono',m.icon);m.label=label||m.label;m.icon=icon||m.icon;save();navRender();renderConfig()}
+function addModule(){const label=prompt('Nombre del nuevo módulo');if(!label)return;const icon=prompt('Icono','📁')||'📁';const id='custom_'+uid();state.modules.push({id,label,icon,visible:true});state.customFields.push({name:'Descripción',type:'Texto',required:false});save();navRender();renderConfig();toast('Módulo creado')}
+function addCustomField(){const name=prompt('Nombre del campo');if(!name)return;const type=prompt('Tipo: Texto / Número / Fecha / Hora / Importe / Lista','Texto')||'Texto';const req=confirm('¿Campo obligatorio?');state.customFields.push({name,type,required:req});save();renderConfig();toast('Campo creado')}
+function deleteCustomField(i){state.customFields.splice(i,1);save();renderConfig()}
+function updateCategory(k,v){state.categories[k]=v.split(',').map(x=>x.trim()).filter(Boolean);save();toast('Categorías guardadas')}
+function toggleDashboard(i,v){state.dashboard[i].visible=v;save();renderInicio()}
+function resetApp(){if(confirm('Se borrarán los cambios y volverán los datos de demostración. ¿Continuar?')){localStorage.removeItem('mitrabajo_final');location.reload()}}
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mi_trabajo_backup.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);save();applyTheme();navRender();renderConfig();show('inicio');toast('Datos importados')}catch(e){alert('Archivo no válido')}};r.readAsText(f)};input.click()}
+function deleteItem(key,i,label){if(confirm('¿Eliminar '+label+'?')){state[key].splice(i,1);save();refresh();toast(label+' eliminado')}}
+function toggleMaintenance(i){state.maintenance[i].status=state.maintenance[i].status==='Realizado'?'Pendiente':'Realizado';save();refresh()}
+function toggleReminder(i){state.reminders[i].done=!state.reminders[i].done;save();refresh()}
+function markCollected(i){state.bank[i].status='Ingresado';save();refresh();toast('Cobro marcado como ingresado')}
+function facturar(i){const x=state.pendingInvoice[i];state.bank.push({id:uid(),date:'16/09/2026',client:x.client,invoice:'Nueva',amount:x.amount,status:'Pendiente'});state.pendingInvoice.splice(i,1);save();refresh();toast('Trabajo pasado a pendiente de cobro')}
+function formField(label,html){return `<div class="field"><label>${label}</label>${html}</div>`}
+function openModal(title,body,onSave){$('#modal').innerHTML=`<div class="page-head"><h2 style="margin:0">${title}</h2><button class="btn secondary" onclick="closeModal()">Cerrar</button></div>${body}<div class="actions" style="margin-top:14px"><button class="btn" id="modalSave">Guardar</button></div>`;$('#modalWrap').style.display='grid';$('#modalSave').onclick=()=>{onSave();closeModal();refresh();}}
+function closeModal(){$('#modalWrap').style.display='none'}
+function openForm(type){
+ if(type==='client')return openModal('Nuevo cliente',`<div class="form-grid">${formField('Nombre','<input id="f_name">')}${formField('Teléfono','<input id="f_phone">')}${formField('Email','<input id="f_email">')}${formField('Dirección','<input id="f_address">')}</div>`,()=>{state.clients.push({id:uid(),name:$('#f_name').value,phone:$('#f_phone').value,email:$('#f_email').value,address:$('#f_address').value,jobs:0,maint:0});save()});
+ if(type==='job')return openModal('Nuevo trabajo',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Hora','<input id="f_time" value="08:00">')}${formField('Cliente','<input id="f_client" placeholder="Cliente">')}${formField('Tipo','<select id="f_type">${state.categories.job.map(x=>`<option>${x}</option>`).join('')}</select>')}${formField('Área','<select id="f_area"><option>Jardinería</option><option>Puerto</option><option>General</option></select>')}${formField('Horas','<input id="f_hours" type="number" step="0.5" value="1">')}${formField('Importe','<input id="f_amount" type="number" step="0.01" value="0">')}${formField('Estado','<select id="f_status">${state.categories.status.map(x=>`<option>${x}</option>`).join('')}</select>')}${formField('Descripción','<textarea id="f_desc"></textarea>')}</div>`,()=>{state.jobs.push({id:uid(),date:$('#f_date').value,time:$('#f_time').value,client:$('#f_client').value,type:$('#f_type').value,area:$('#f_area').value,hours:Number($('#f_hours').value||0),amount:Number($('#f_amount').value||0),status:$('#f_status').value,description:$('#f_desc').value});save()});
+ if(type==='maintenance')return openModal('Nuevo mantenimiento',`<div class="form-grid">${formField('Mantenimiento','<input id="f_title">')}${formField('Cliente','<input id="f_client">')}${formField('Periodicidad','<input id="f_freq" value="Mensual">')}${formField('Próxima fecha','<input id="f_next" value="01/10/2026">')}${formField('Estado','<select id="f_status"><option>Pendiente</option><option>Realizado</option></select>')}${formField('Importe','<input id="f_amount" type="number" value="0">')}</div>`,()=>{state.maintenance.push({id:uid(),title:$('#f_title').value,client:$('#f_client').value,freq:$('#f_freq').value,next:$('#f_next').value,status:$('#f_status').value,amount:Number($('#f_amount').value||0)});save()});
+ if(type==='pendingInvoice')return openModal('Trabajo pendiente de facturar',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Cliente','<input id="f_client">')}${formField('Trabajo','<input id="f_work">')}${formField('Importe','<input id="f_amount" type="number" value="0">')}</div>`,()=>{state.pendingInvoice.push({id:uid(),date:$('#f_date').value,client:$('#f_client').value,work:$('#f_work').value,amount:Number($('#f_amount').value||0)});save()});
+ if(type==='bank')return openModal('Ingreso / Cobro',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Cliente','<input id="f_client">')}${formField('Factura','<input id="f_invoice" placeholder="F-0000">')}${formField('Importe','<input id="f_amount" type="number" value="0">')}${formField('Estado','<select id="f_status"><option>Pendiente</option><option>Ingresado</option></select>')}</div>`,()=>{state.bank.push({id:uid(),date:$('#f_date').value,client:$('#f_client').value,invoice:$('#f_invoice').value,amount:Number($('#f_amount').value||0),status:$('#f_status').value});save()});
+ if(type==='expense')return openModal('Nuevo gasto',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Concepto','<input id="f_concept">')}${formField('Categoría','<select id="f_cat">${state.categories.expense.map(x=>`<option>${x}</option>`).join('')}</select>')}${formField('Tipo','<select id="f_type"><option>Variable</option><option>Fijo</option></select>')}${formField('Importe','<input id="f_amount" type="number" step="0.01" value="0">')}</div>`,()=>{state.expenses.push({id:uid(),date:$('#f_date').value,concept:$('#f_concept').value,category:$('#f_cat').value,amount:Number($('#f_amount').value||0),type:$('#f_type').value});save()});
+ if(type==='reminder')return openModal('Nuevo recordatorio',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Hora','<input id="f_time" value="17:00">')}${formField('Texto','<input id="f_title">')}${formField('Prioridad','<select id="f_priority">${state.categories.priority.map(x=>`<option>${x}</option>`).join('')}</select>')}${formField('Repetición','<select id="f_repeat"><option>No repetir</option><option>Diaria</option><option>Semanal</option><option>Mensual</option></select>')}</div>`,()=>{state.reminders.push({id:uid(),date:$('#f_date').value,time:$('#f_time').value,title:$('#f_title').value,priority:$('#f_priority').value,repeat:$('#f_repeat').value,done:false});save()});
+ if(type==='puerto')return openModal('Nuevo turno de Puerto',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Turno','<input id="f_shift" value="08:00–14:00">')}${formField('Horas','<input id="f_hours" type="number" value="6">')}${formField('Capataz','<input id="f_foreman">')}${formField('Operativa','<input id="f_operation">')}${formField('Trabajo realizado','<input id="f_work">')}${formField('€','<input id="f_amount" type="number" value="0">')}${formField('Notas','<textarea id="f_note"></textarea>')}</div>`,()=>{state.puerto.push({id:uid(),date:$('#f_date').value,shift:$('#f_shift').value,hours:Number($('#f_hours').value||0),foreman:$('#f_foreman').value,operation:$('#f_operation').value,work:$('#f_work').value,amount:Number($('#f_amount').value||0),note:$('#f_note').value});save()});
+}
+function editClient(i){const c=state.clients[i];openModal('Editar cliente',`<div class="form-grid">${formField('Nombre',`<input id="f_name" value="${c.name}">`)}${formField('Teléfono',`<input id="f_phone" value="${c.phone}">`)}${formField('Email',`<input id="f_email" value="${c.email||''}">`)}${formField('Dirección',`<input id="f_address" value="${c.address||''}">`)}</div>`,()=>{Object.assign(c,{name:$('#f_name').value,phone:$('#f_phone').value,email:$('#f_email').value,address:$('#f_address').value});save()})}
+function refresh(){navRender();applyTheme();show($('#nav button.active')?.dataset.id||'inicio')}
+$('#search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();$$('.view.active tbody tr').forEach(tr=>tr.style.display=tr.innerText.toLowerCase().includes(q)?'':'none')})
+applyTheme();navRender();show('inicio');save();
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body></html>
