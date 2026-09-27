@@ -282,6 +282,35 @@ function formField(label,html){return `<div class="field"><label>${label}</label
 function openModal(title,body,onSave){$('#modal').innerHTML=`<div class="page-head"><h2 style="margin:0">${title}</h2><button class="btn secondary" onclick="closeModal()">Cerrar</button></div>${body}<div class="actions" style="margin-top:14px"><button class="btn" id="modalSave">Guardar</button></div>`;$('#modalWrap').style.display='grid';$('#modalSave').onclick=()=>{onSave();closeModal();refresh();}}
 function closeModal(){$('#modalWrap').style.display='none'}
 function openForm(type){
+ const ask=(label,def='')=>prompt(label,def);
+ if(type==='client'){
+  const name=ask('Nombre del cliente'); if(!name)return;
+  state.clients.push({id:uid(),name,phone:ask('Teléfono',''),email:ask('Email',''),address:ask('Dirección',''),jobs:0,maint:0});
+ }
+ else if(type==='job'){
+  state.jobs.push({id:uid(),date:ask('Fecha','27/09/2026'),time:ask('Hora','08:00'),client:ask('Cliente',''),type:ask('Tipo','Corte de césped'),area:ask('Área','Jardinería'),hours:Number(ask('Horas','1'))||0,amount:Number(ask('Importe','0'))||0,status:ask('Estado','Pendiente'),description:ask('Descripción','')});
+ }
+ else if(type==='maintenance'){
+  state.maintenance.push({id:uid(),title:ask('Mantenimiento',''),client:ask('Cliente',''),freq:ask('Periodicidad','Mensual'),next:ask('Próxima fecha','01/10/2026'),status:ask('Estado','Pendiente'),amount:Number(ask('Importe','0'))||0});
+ }
+ else if(type==='pendingInvoice'){
+  state.pendingInvoice.push({id:uid(),date:ask('Fecha','27/09/2026'),client:ask('Cliente',''),work:ask('Trabajo',''),amount:Number(ask('Importe','0'))||0});
+ }
+ else if(type==='bank'){
+  state.bank.push({id:uid(),date:ask('Fecha','27/09/2026'),client:ask('Cliente',''),invoice:ask('Factura','F-0000'),amount:Number(ask('Importe','0'))||0,status:ask('Estado','Pendiente')});
+ }
+ else if(type==='expense'){
+  state.expenses.push({id:uid(),date:ask('Fecha','27/09/2026'),concept:ask('Concepto',''),category:ask('Categoría','General'),amount:Number(ask('Importe','0'))||0,type:ask('Tipo','Variable')});
+ }
+ else if(type==='reminder'){
+  state.reminders.push({id:uid(),date:ask('Fecha','27/09/2026'),time:ask('Hora','17:00'),title:ask('Texto',''),priority:ask('Prioridad','Media'),repeat:ask('Repetición','No repetir'),done:false});
+ }
+ else if(type==='puerto'){
+  state.puerto.push({id:uid(),date:ask('Fecha','27/09/2026'),shift:ask('Turno','08:00–14:00'),hours:Number(ask('Horas','6'))||0,foreman:ask('Capataz',''),operation:ask('Operativa',''),work:ask('Trabajo realizado',''),amount:Number(ask('€','0'))||0,note:ask('Notas','')});
+ }
+ save();
+ refresh();
+}
  if(type==='client')return openModal('Nuevo cliente',`<div class="form-grid">${formField('Nombre','<input id="f_name">')}${formField('Teléfono','<input id="f_phone">')}${formField('Email','<input id="f_email">')}${formField('Dirección','<input id="f_address">')}</div>`,()=>{state.clients.push({id:uid(),name:$('#f_name').value,phone:$('#f_phone').value,email:$('#f_email').value,address:$('#f_address').value,jobs:0,maint:0});save()});
  if(type==='job')return openModal('Nuevo trabajo',`<div class="form-grid">${formField('Fecha','<input id="f_date" value="16/09/2026">')}${formField('Hora','<input id="f_time" value="08:00">')}${formField('Cliente','<input id="f_client" placeholder="Cliente">')}${formField('Tipo','<select id="f_type">${state.categories.job.map(x=>`<option>${x}</option>`).join('')}</select>')}${formField('Área','<select id="f_area"><option>Jardinería</option><option>Puerto</option><option>General</option></select>')}${formField('Horas','<input id="f_hours" type="number" step="0.5" value="1">')}${formField('Importe','<input id="f_amount" type="number" step="0.01" value="0">')}${formField('Estado','<select id="f_status">${state.categories.status.map(x=>`<option>${x}</option>`).join('')}</select>')}${formField('Descripción','<textarea id="f_desc"></textarea>')}</div>`,()=>{state.jobs.push({id:uid(),date:$('#f_date').value,time:$('#f_time').value,client:$('#f_client').value,type:$('#f_type').value,area:$('#f_area').value,hours:Number($('#f_hours').value||0),amount:Number($('#f_amount').value||0),status:$('#f_status').value,description:$('#f_desc').value});save()});
  if(type==='maintenance')return openModal('Nuevo mantenimiento',`<div class="form-grid">${formField('Mantenimiento','<input id="f_title">')}${formField('Cliente','<input id="f_client">')}${formField('Periodicidad','<input id="f_freq" value="Mensual">')}${formField('Próxima fecha','<input id="f_next" value="01/10/2026">')}${formField('Estado','<select id="f_status"><option>Pendiente</option><option>Realizado</option></select>')}${formField('Importe','<input id="f_amount" type="number" value="0">')}</div>`,()=>{state.maintenance.push({id:uid(),title:$('#f_title').value,client:$('#f_client').value,freq:$('#f_freq').value,next:$('#f_next').value,status:$('#f_status').value,amount:Number($('#f_amount').value||0)});save()});
