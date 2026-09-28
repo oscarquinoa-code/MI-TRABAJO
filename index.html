@@ -411,8 +411,16 @@ function renderCalendario(){
 let cells = '';
 
 for(let i = 0; i < firstWeekDay; i++){
-  cells += '<div class="cal-cell empty"></div>';
-}
+cells += `
+      <div class="cal-cell"
+           onclick="showCalendarDay(${day})"
+           style="cursor:pointer">
+
+        <div class="cal-day">${day}</div>
+        ${events}
+
+      </div>
+    `;
 
 for(let day = 1; day <= daysInMonth; day++){
 
@@ -471,13 +479,16 @@ for(let day = 1; day <= daysInMonth; day++){
       `;
     });
 
-    cells += `
-      <div class="cal-cell">
+  cells += `
+      <div class="cal-cell"
+           onclick="showCalendarDay(${day})"
+           style="cursor:pointer">
+
         <div class="cal-day">${day}</div>
         ${events}
+
       </div>
     `;
-  }
 
   $('#view-calendario').innerHTML = `
     <div class="page-head">
