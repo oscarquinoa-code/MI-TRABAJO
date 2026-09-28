@@ -1100,6 +1100,7 @@ function render(id){
  if(typeof fn==='function') fn();
 }
  function refresh(){navRender();applyTheme();show($('#nav button.active')?.dataset.id||'inicio')}
+ }
 $('#search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();$$('.view.active tbody tr').forEach(tr=>tr.style.display=tr.innerText.toLowerCase().includes(q)?'':'none')})
 if(!state || !Array.isArray(state.modules)){
  localStorage.removeItem('mitrabajo_final');
