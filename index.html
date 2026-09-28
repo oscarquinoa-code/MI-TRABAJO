@@ -411,9 +411,14 @@ function renderCalendario(){
   let cells = '';
 
   for(let i = 0; i < firstWeekDay; i++){
-    cells += '<div class="cal-cell empty"></div>';
-  }
-
+ cells += `
+      <div class="cal-cell" 
+           style="cursor:pointer"
+           onclick="showCalendarDay(${day})">
+        <div class="cal-day">${day}</div>
+        ${events}
+      </div>
+    `;
   for(let day = 1; day <= daysInMonth; day++){
 
     const jobs = (Array.isArray(state.jobs) ? state.jobs : []).filter(j => {
@@ -560,7 +565,86 @@ function renderCalendario(){
     renderCalendario();
   };
 }
+function showCalendarDay(day){
 
+  const jobs = (Array.isArray(state.jobs) ? state.jobs : []).filter(j => {
+    const d = getCalendarDate(j.date);
+
+    return d &&
+      d.day === day &&
+      d.month === calendarMonth &&
+      d.year === calendarYear;
+  });
+
+  const fecha =
+    String(day).padStart(2,'0') + '/' +
+    String(calendarMonth + 1).padStart(2,'0') + '/' +
+    calendarYear;
+
+  let contenido = '';
+
+  if(jobs.length === 0){
+
+    contenido = `
+      <div class="notice">
+        No tienes trabajos programados para el ${fecha}.
+      </div>
+    `;
+
+  }else{
+
+    contenido = `
+      <div class="list">
+        ${jobs.map(j => `
+          <div class="row">
+            <span>
+              <b>${j.time || ''} · ${j.type || 'Trabajo'}</b>
+              <div class="muted">
+                ${j.client || 'Sin cliente'} ·
+                ${j.area || ''} ·
+                ${j.hours || 0} h
+              </div>
+              <div class="muted">
+                ${j.description || ''}
+              </div>
+            </span>
+
+            <span>
+              <b>${money(j.amount)}</b>
+              <div class="tag ${
+                j.status === 'Pendiente' ? 'pending' : ''
+              }">
+                ${j.status || 'Pendiente'}
+              </div>
+            </span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  $('#modal').innerHTML = `
+    <div class="page-head">
+      <h2 style="margin:0">
+        📅 Trabajos del ${fecha}
+      </h2>
+
+      <button class="btn secondary" onclick="closeModal()">
+        Cerrar
+      </button>
+    </div>
+
+    ${contenido}
+
+    <div class="actions" style="margin-top:14px">
+      <button class="btn" onclick="closeModal();openForm('job')">
+        ＋ Nuevo trabajo
+      </button>
+    </div>
+  `;
+
+  $('#modalWrap').style.display = 'grid';
+}
 function calendarPrev(){
 
   calendarMonth--;
