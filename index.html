@@ -408,26 +408,22 @@ function renderCalendario(){
   let firstWeekDay = firstDay.getDay();
   firstWeekDay = firstWeekDay === 0 ? 6 : firstWeekDay - 1;
 
-  let cells = '';
+let cells = '';
 
-  for(let i = 0; i < firstWeekDay; i++){
- cells += `
-      <div class="cal-cell" 
-           style="cursor:pointer"
-           onclick="showCalendarDay(${day})">
-        <div class="cal-day">${day}</div>
-        ${events}
-      </div>
-    `;
-  for(let day = 1; day <= daysInMonth; day++){
+for(let i = 0; i < firstWeekDay; i++){
+  cells += '<div class="cal-cell empty"></div>';
+}
 
-    const jobs = (Array.isArray(state.jobs) ? state.jobs : []).filter(j => {
-      const d = getCalendarDate(j.date);
-      return d &&
-        d.day === day &&
-        d.month === calendarMonth &&
-        d.year === calendarYear;
-    });
+for(let day = 1; day <= daysInMonth; day++){
+
+  const jobs = (Array.isArray(state.jobs) ? state.jobs : []).filter(j => {
+    const d = getCalendarDate(j.date);
+
+    return d &&
+      d.day === day &&
+      d.month === calendarMonth &&
+      d.year === calendarYear;
+  });
 
     const reminders = (Array.isArray(state.reminders) ? state.reminders : []).filter(r => {
       const d = getCalendarDate(r.date);
