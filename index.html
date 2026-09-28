@@ -1099,7 +1099,8 @@ function render(id){
  const fn=renderers[id];
  if(typeof fn==='function') fn();
 }
- function refresh(){navRender();applyTheme();show($('#nav button.active')?.dataset.id||'inicio')}
+ function refresh(){navRender();applyTheme();show($('#nav button.active')?.dataset.id||'inicio') 
+}
  
 $('#search').addEventListener('input',e=>{
  const q=e.target.value.toLowerCase();
