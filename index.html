@@ -939,7 +939,6 @@ function openForm(type){
   calendarYear=Number(p[0]);
   calendarMonth=Number(p[1])-1;
  }
-
  else if(type==='maintenance'){
 
   state.maintenance.push({
@@ -952,8 +951,7 @@ function openForm(type){
    amount:Number(ask('Importe','0'))||0
   });
  }
-
- else if(type==='pendingInvoice'){
+else if(type==='pendingInvoice'){
 
  state.pendingInvoice.push({
   id:uid(),
@@ -962,10 +960,7 @@ function openForm(type){
   work:ask('Trabajo',''),
   amount:Number(ask('Importe','0'))||0
  });
-
 }
-
-
 else if(type==='banco'){
 
  const cliente=prompt(
