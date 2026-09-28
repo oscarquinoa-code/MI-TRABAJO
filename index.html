@@ -652,57 +652,6 @@ function showCalendarDay(day){
 
   $('#modalWrap').style.display = 'grid';
 }
- function showCalendarDay(day){
-
- const trabajos = (Array.isArray(state.jobs) ? state.jobs : []).filter(j=>{
-
-  const d = getCalendarDate(j.date);
-
-  return d &&
-   d.day === day &&
-   d.month === calendarMonth &&
-   d.year === calendarYear;
-
- });
-
-
- let mensaje =
-  "📅 Trabajos del " +
-  day + "/" +
-  (calendarMonth + 1) + "/" +
-  calendarYear +
-  "\n\n";
-
-
- if(trabajos.length === 0){
-
-  mensaje += "No hay trabajos programados.";
-
- }else{
-
-  trabajos.forEach((j,i)=>{
-
-   mensaje +=
-    (i+1)+") " +
-    (j.time || "") +
-    " - " +
-    (j.client || "Sin cliente") +
-    " - " +
-    (j.type || "Trabajo") +
-    "\nEstado: " +
-    (j.status || "Pendiente") +
-    "\nImporte: " +
-    money(j.amount) +
-    "\n\n";
-
-  });
-
- }
-
-
- alert(mensaje);
-
-}
 function calendarPrev(){
 
   calendarMonth--;
