@@ -561,6 +561,50 @@ function renderCalendario(){
   </div>
  `;
 }
+ function calendarPrev(){
+  calendarMonth--;
+
+  if(calendarMonth < 0){
+    calendarMonth = 11;
+    calendarYear--;
+  }
+
+  renderCalendario();
+}
+
+function calendarNext(){
+  calendarMonth++;
+
+  if(calendarMonth > 11){
+    calendarMonth = 0;
+    calendarYear++;
+  }
+
+  renderCalendario();
+}
+
+function calendarToday(){
+  const now = new Date();
+
+  calendarYear = now.getFullYear();
+  calendarMonth = now.getMonth();
+
+  renderCalendario();
+}
+
+function calendarChangeMonth(value){
+  calendarMonth = Number(value);
+  renderCalendario();
+}
+
+function calendarChangeYear(value){
+  const year = Number(value);
+
+  if(!Number.isNaN(year)){
+    calendarYear = year;
+    renderCalendario();
+  }
+}
 function renderClientes(){
  $('#view-clientes').innerHTML=`<div class="page-head"><h1>👥 Clientes</h1><button class="btn" onclick="openForm('client')">＋ Nuevo cliente</button></div><div class="cards">${state.clients.map((c,i)=>`<div class="client-card"><h3>${c.name}</h3><div class="muted">${c.phone} · ${c.email||''}</div><p>${c.address||''}</p><b>${c.jobs}</b> trabajos · <b>${c.maint}</b> mantenimientos<div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="editClient(${i})">Editar</button><button class="btn danger" onclick="deleteItem('clients',${i},'Cliente')">Eliminar</button></div></div>`).join('')}</div>`
 }
