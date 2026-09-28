@@ -378,190 +378,191 @@ function editJob(i){
 let calendarYear = new Date().getFullYear();
 let calendarMonth = new Date().getMonth();
 
-function parseAppDate(value){
- const p=String(value||'').split('/');
- if(p.length!==3)return null;
+function getCalendarDate(value){
+  const p = String(value || '').split('/');
+  if(p.length !== 3) return null;
 
- return {
-  day:Number(p[0]),
-  month:Number(p[1])-1,
-  year:Number(p[2])
- };
+  const day = Number(p[0]);
+  const month = Number(p[1]) - 1;
+  const year = Number(p[2]);
+
+  if(!Number.isFinite(day) || !Number.isFinite(month) || !Number.isFinite(year)){
+    return null;
+  }
+
+  return { day, month, year };
 }
+
 function renderCalendario(){
 
- const meses=[
-  'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
- ];
+  const meses = [
+    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+  ];
 
- const dias=['L','M','X','J','V','S','D'];
+  const dias = ['L','M','X','J','V','S','D'];
 
- const jobs=Array.isArray(state.jobs)?state.jobs:[];
- const reminders=Array.isArray(state.reminders)?state.reminders:[];
- const maintenance=Array.isArray(state.maintenance)?state.maintenance:[];
+  const firstDay = new Date(calendarYear, calendarMonth, 1);
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
 
- const firstDay=new Date(calendarYear,calendarMonth,1);
- const totalDays=new Date(calendarYear,calendarMonth+1,0).getDate();
+  let firstWeekDay = firstDay.getDay();
+  firstWeekDay = firstWeekDay === 0 ? 6 : firstWeekDay - 1;
 
- let startDay=firstDay.getDay();
- startDay=startDay===0?6:startDay-1;
+  let cells = '';
 
- let cells='';
+  for(let i = 0; i < firstWeekDay; i++){
+    cells += '<div class="cal-cell empty"></div>';
+  }
 
- for(let i=0;i<startDay;i++){
-  cells+='<div class="cal-cell"></div>';
- }
+  for(let day = 1; day <= daysInMonth; day++){
 
- for(let day=1;day<=totalDays;day++){
+    const jobs = (Array.isArray(state.jobs) ? state.jobs : []).filter(j => {
+      const d = getCalendarDate(j.date);
+      return d &&
+        d.day === day &&
+        d.month === calendarMonth &&
+        d.year === calendarYear;
+    });
 
-  let events='';
+    const reminders = (Array.isArray(state.reminders) ? state.reminders : []).filter(r => {
+      const d = getCalendarDate(r.date);
+      return d &&
+        d.day === day &&
+        d.month === calendarMonth &&
+        d.year === calendarYear &&
+        !r.done;
+    });
 
-  jobs.forEach(j=>{
-   const d=parseAppDate(j.date);
+    const maintenance = (Array.isArray(state.maintenance) ? state.maintenance : []).filter(m => {
+      const d = getCalendarDate(m.next);
+      return d &&
+        d.day === day &&
+        d.month === calendarMonth &&
+        d.year === calendarYear;
+    });
 
-   if(
-    d &&
-    d.day===day &&
-    d.month===calendarMonth &&
-    d.year===calendarYear
-   ){
-    events+=`
-     <div class="muted">
-      <span class="cal-dot green"></span>
-      ${j.time||''} ${j.type||'Trabajo'}
-     </div>`;
-   }
-  });
+    let events = '';
 
-  reminders.forEach(r=>{
-   const d=parseAppDate(r.date);
+    jobs.forEach(j => {
+      events += `
+        <div class="muted">
+          <span class="cal-dot green"></span>
+          ${j.time || ''} ${j.type || 'Trabajo'}
+        </div>
+      `;
+    });
 
-   if(
-    d &&
-    d.day===day &&
-    d.month===calendarMonth &&
-    d.year===calendarYear &&
-    !r.done
-   ){
-    events+=`
-     <div class="muted">
-      <span class="cal-dot red"></span>
-      ${r.time||''} ${r.title||'Recordatorio'}
-     </div>`;
-   }
-  });
+    reminders.forEach(r => {
+      events += `
+        <div class="muted">
+          <span class="cal-dot red"></span>
+          ${r.time || ''} ${r.title || 'Recordatorio'}
+        </div>
+      `;
+    });
 
-  maintenance.forEach(m=>{
-   const d=parseAppDate(m.next);
+    maintenance.forEach(m => {
+      events += `
+        <div class="muted">
+          <span class="cal-dot orange"></span>
+          ${m.title || 'Mantenimiento'}
+        </div>
+      `;
+    });
 
-   if(
-    d &&
-    d.day===day &&
-    d.month===calendarMonth &&
-    d.year===calendarYear
-   ){
-    events+=`
-     <div class="muted">
-      <span class="cal-dot orange"></span>
-      ${m.title||'Mantenimiento'}
-     </div>`;
-   }
-  });
+    cells += `
+      <div class="cal-cell">
+        <div class="cal-day">${day}</div>
+        ${events}
+      </div>
+    `;
+  }
 
-  cells+=`
-   <div class="cal-cell">
-    <div class="cal-day">${day}</div>
-    ${events}
-   </div>`;
- }
+  $('#view-calendario').innerHTML = `
+    <div class="page-head">
+      <h1>📅 Calendario</h1>
 
- $('#view-calendario').innerHTML=`
-
-  <div class="page-head">
-
-   <h1>📅 Calendario</h1>
-
-   <div class="actions">
-
-    <button class="btn secondary" onclick="calendarPrev()">
-     ‹ Anterior
-    </button>
-
-    <button class="btn secondary" onclick="calendarToday()">
-     Hoy
-    </button>
-
-    <button class="btn secondary" onclick="calendarNext()">
-     Siguiente ›
-    </button>
-
-    <button class="btn" onclick="openForm('job')">
-     ＋ Trabajo
-    </button>
-
-    <button class="btn secondary" onclick="openForm('reminder')">
-     🔔 Recordatorio
-    </button>
-
-    <button class="btn secondary" onclick="openForm('maintenance')">
-     🔧 Mantenimiento
-    </button>
-
-   </div>
-  </div>
-
-  <div class="card">
-
-   <div class="card-head">
-
-    <h3>
-     ${meses[calendarMonth]} ${calendarYear}
-    </h3>
-
-    <div class="actions">
-
-     <select onchange="calendarChangeMonth(this.value)">
-      ${meses.map((m,i)=>`
-       <option value="${i}" ${i===calendarMonth?'selected':''}>
-        ${m}
-       </option>
-      `).join('')}
-     </select>
-
-     <input
-      type="number"
-      min="1900"
-      max="2200"
-      value="${calendarYear}"
-      onchange="calendarChangeYear(this.value)"
-      style="width:100px;padding:8px;border:1px solid var(--line);border-radius:8px"
-     >
-
+      <div class="actions">
+        <button class="btn secondary" onclick="calendarPrev()">‹ Anterior</button>
+        <button class="btn secondary" onclick="calendarToday()">Hoy</button>
+        <button class="btn secondary" onclick="calendarNext()">Siguiente ›</button>
+        <button class="btn" onclick="openForm('job')">＋ Trabajo</button>
+        <button class="btn secondary" onclick="openForm('reminder')">🔔 Recordatorio</button>
+        <button class="btn secondary" onclick="openForm('maintenance')">🔧 Mantenimiento</button>
+      </div>
     </div>
 
-   </div>
+    <div class="card">
 
-   <div class="calendar-grid">
+      <div class="card-head">
 
-    ${dias.map(d=>`
-     <div class="cal-cell">
-      <div class="cal-head">${d}</div>
-     </div>
-    `).join('')}
+        <h3>${meses[calendarMonth]} ${calendarYear}</h3>
 
-   </div>
+        <div class="actions">
 
-   <div class="calendar-grid">
+          <select id="calendarMonthSelect">
+            ${meses.map((m, i) => `
+              <option value="${i}" ${i === calendarMonth ? 'selected' : ''}>
+                ${m}
+              </option>
+            `).join('')}
+          </select>
 
-    ${cells}
+          <input
+            id="calendarYearInput"
+            type="number"
+            min="1900"
+            max="2200"
+            value="${calendarYear}"
+            style="width:100px;padding:8px;border:1px solid var(--line);border-radius:8px"
+          >
 
-   </div>
+          <button class="btn secondary" id="calendarApply">
+            Ir
+          </button>
 
-  </div>
- `;
+        </div>
+
+      </div>
+
+      <div class="calendar-grid calendar-head-grid">
+        ${dias.map(d => `
+          <div class="cal-cell">
+            <div class="cal-head">${d}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="calendar-grid">
+        ${cells}
+      </div>
+
+    </div>
+  `;
+
+  const monthSelect = $('#calendarMonthSelect');
+  const yearInput = $('#calendarYearInput');
+  const applyButton = $('#calendarApply');
+
+  applyButton.onclick = () => {
+
+    const newMonth = Number(monthSelect.value);
+    const newYear = Number(yearInput.value);
+
+    if(!Number.isFinite(newYear) || newYear < 1900 || newYear > 2200){
+      alert('Introduce un año válido.');
+      return;
+    }
+
+    calendarMonth = newMonth;
+    calendarYear = newYear;
+
+    renderCalendario();
+  };
 }
- function calendarPrev(){
+
+function calendarPrev(){
+
   calendarMonth--;
 
   if(calendarMonth < 0){
@@ -573,6 +574,7 @@ function renderCalendario(){
 }
 
 function calendarNext(){
+
   calendarMonth++;
 
   if(calendarMonth > 11){
@@ -584,26 +586,13 @@ function calendarNext(){
 }
 
 function calendarToday(){
+
   const now = new Date();
 
   calendarYear = now.getFullYear();
   calendarMonth = now.getMonth();
 
   renderCalendario();
-}
-
-function calendarChangeMonth(value){
-  calendarMonth = Number(value);
-  renderCalendario();
-}
-
-function calendarChangeYear(value){
-  const year = Number(value);
-
-  if(!Number.isNaN(year)){
-    calendarYear = year;
-    renderCalendario();
-  }
 }
 function renderClientes(){
  $('#view-clientes').innerHTML=`<div class="page-head"><h1>👥 Clientes</h1><button class="btn" onclick="openForm('client')">＋ Nuevo cliente</button></div><div class="cards">${state.clients.map((c,i)=>`<div class="client-card"><h3>${c.name}</h3><div class="muted">${c.phone} · ${c.email||''}</div><p>${c.address||''}</p><b>${c.jobs}</b> trabajos · <b>${c.maint}</b> mantenimientos<div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="editClient(${i})">Editar</button><button class="btn danger" onclick="deleteItem('clients',${i},'Cliente')">Eliminar</button></div></div>`).join('')}</div>`
