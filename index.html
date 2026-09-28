@@ -1073,7 +1073,52 @@ else if(type==='banco'){
  refresh();
 }
 
-function editClient(i){const c=state.clients[i];openModal('Editar cliente',`<div class="form-grid">${formField('Nombre',`<input id="f_name" value="${c.name}">`)}${formField('Teléfono',`<input id="f_phone" value="${c.phone}">`)}${formField('Email',`<input id="f_email" value="${c.email||''}">`)}${formField('Dirección',`<input id="f_address" value="${c.address||''}">`)}</div>`,()=>{Object.assign(c,{name:$('#f_name').value,phone:$('#f_phone').value,email:$('#f_email').value,address:$('#f_address').value});save()})}
+function editClient(i){
+
+ const c=state.clients[i];
+
+ openModal(
+  'Editar cliente',
+  `
+  <div class="form-grid">
+
+   ${formField(
+    'Nombre',
+    `<input id="f_name" value="${c.name || ''}">`
+   )}
+
+   ${formField(
+    'Teléfono',
+    `<input id="f_phone" value="${c.phone || ''}">`
+   )}
+
+   ${formField(
+    'Email',
+    `<input id="f_email" value="${c.email || ''}">`
+   )}
+
+   ${formField(
+    'Dirección',
+    `<input id="f_address" value="${c.address || ''}">`
+   )}
+
+  </div>
+  `,
+  ()=>{
+
+   Object.assign(c,{
+    name:$('#f_name').value,
+    phone:$('#f_phone').value,
+    email:$('#f_email').value,
+    address:$('#f_address').value
+   });
+
+   save();
+
+  }
+ );
+
+}
  function render(id){
  const renderers={
   inicio:renderInicio,
