@@ -411,17 +411,10 @@ function renderCalendario(){
 let cells = '';
 
 for(let i = 0; i < firstWeekDay; i++){
-cells += `
-      <div class="cal-cell"
-           onclick="showCalendarDay(${day})"
-           style="cursor:pointer">
-
-        <div class="cal-day">${day}</div>
-        ${events}
-
-      </div>
-    `;
-
+  cells += `
+    <div class="cal-cell"></div>
+  `;
+}
 for(let day = 1; day <= daysInMonth; day++){
 
   const jobs = (Array.isArray(state.jobs) ? state.jobs : []).filter(j => {
@@ -1081,7 +1074,7 @@ else if(type==='banco'){
 }
 
 function editClient(i){const c=state.clients[i];openModal('Editar cliente',`<div class="form-grid">${formField('Nombre',`<input id="f_name" value="${c.name}">`)}${formField('Teléfono',`<input id="f_phone" value="${c.phone}">`)}${formField('Email',`<input id="f_email" value="${c.email||''}">`)}${formField('Dirección',`<input id="f_address" value="${c.address||''}">`)}</div>`,()=>{Object.assign(c,{name:$('#f_name').value,phone:$('#f_phone').value,email:$('#f_email').value,address:$('#f_address').value});save()})}
-}
+
  function render(id){
  const renderers={
   inicio:renderInicio,
