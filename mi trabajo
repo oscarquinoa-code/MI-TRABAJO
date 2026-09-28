@@ -1156,6 +1156,12 @@ if(!state || !Array.isArray(state.modules)){
  state=JSON.parse(JSON.stringify(defaultState));
 }
  applyTheme();navRender();show('inicio');save();
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+ });
+}
+
 </script>
-</body></html>
+</body>
+</html>
