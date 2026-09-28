@@ -955,14 +955,17 @@ function openForm(type){
 
  else if(type==='pendingInvoice'){
 
-  state.pendingInvoice.push({
-   id:uid(),
-   date:ask('Fecha','27/09/2026'),
-   client:ask('Cliente',''),
-   work:ask('Trabajo',''),
-   amount:Number(ask('Importe','0'))||0
-  });
- }
+ state.pendingInvoice.push({
+  id:uid(),
+  date:ask('Fecha','27/09/2026'),
+  client:ask('Cliente',''),
+  work:ask('Trabajo',''),
+  amount:Number(ask('Importe','0'))||0
+ });
+
+}
+
+
 else if(type==='banco'){
 
  const cliente=prompt(
