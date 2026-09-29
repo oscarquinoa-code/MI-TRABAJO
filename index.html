@@ -915,7 +915,7 @@ function openForm(type){
  else if(type==='job'){
 
   const iso=ask(
-   'Fecha (AAAA-MM-DD)',
+   'Fecha (DD-MM-AAAA)',
    calendarYear+'-'+String(calendarMonth+1).padStart(2,'0')+'-01'
   );
 
@@ -1015,6 +1015,7 @@ else if(type==='banco'){
 
  save();
  refresh();
+ 
 }
  else if(type==='bank'){
 
