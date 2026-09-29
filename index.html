@@ -932,6 +932,13 @@ function openModal(title,body,onSave){
  };
 
 }
+
+function closeModal(){
+
+ $('#modalWrap').style.display='none';
+ $('#modal').innerHTML='';
+
+}
 function openForm(type){
 
  const ask=(label,def='')=>prompt(label,def);
