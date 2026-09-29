@@ -207,7 +207,7 @@ function show(id){
 function mini(a,b){return `<div class="mini"><small>${a}</small><b>${b}</b></div>`}
 function panel(id,title,body,action=''){return state.dashboard.find(x=>x.id===id)?.visible?`<div class="card"><div class="card-head"><h3>${title}</h3>${action}</div>${body}</div>`:''}
 function renderInicio(){
- const fact=sum(state.pendingInvoice,'amount')+sum(state.bank,'amount');
+ const fact=sum(state.pendingInvoice,'amount')+sum(state.banco,'amount');
  const cobrado=sum(state.bank.filter(x=>x.status==='Ingresado'),'amount');
  const pendingCash=sum(state.bank.filter(x=>x.status==='Pendiente'),'amount');
  const expenses=sum(state.expenses,'amount');
@@ -482,7 +482,7 @@ for(let day = 1; day <= daysInMonth; day++){
 
       </div>
     `;
-
+}  
   $('#view-calendario').innerHTML = `
     <div class="page-head">
       <h1>📅 Calendario</h1>
@@ -889,7 +889,27 @@ function deleteBanco(i){
  }
 }
 function markCollected(i){state.bank[i].status='Ingresado';save();refresh();toast('Cobro marcado como ingresado')}
-function facturar(i){const x=state.pendingInvoice[i];state.bank.push({id:uid(),date:'16/09/2026',client:x.client,invoice:'Nueva',amount:x.amount,status:'Pendiente'});state.pendingInvoice.splice(i,1);save();refresh();toast('Trabajo pasado a pendiente de cobro')}
+function facturar(i){
+
+ const x=state.pendingInvoice[i];
+
+ state.banco.push({
+  id:uid(),
+  client:x.client,
+  date:x.date,
+  time:'',
+  invoice:'Nueva',
+  amount:x.amount,
+  status:'No ingresado'
+ });
+
+ state.pendingInvoice.splice(i,1);
+
+ save();
+ refresh();
+
+ toast('Trabajo pasado a banco pendiente');
+}
 function formField(label,html){return `<div class="field"><label>${label}</label>${html}</div>`}
 function openModal(title,body,onSave){
 
