@@ -891,8 +891,27 @@ function deleteBanco(i){
 function markCollected(i){state.bank[i].status='Ingresado';save();refresh();toast('Cobro marcado como ingresado')}
 function facturar(i){const x=state.pendingInvoice[i];state.bank.push({id:uid(),date:'16/09/2026',client:x.client,invoice:'Nueva',amount:x.amount,status:'Pendiente'});state.pendingInvoice.splice(i,1);save();refresh();toast('Trabajo pasado a pendiente de cobro')}
 function formField(label,html){return `<div class="field"><label>${label}</label>${html}</div>`}
-function openModal(title,body,onSave){$('#modal').innerHTML=`<div class="page-head"><h2 style="margin:0">${title}</h2><button class="btn secondary" onclick="closeModal()">Cerrar</button></div>${body}<div class="actions" style="margin-top:14px"><button class="btn" id="modalSave">Guardar</button></div>`;$('#modalWrap').style.display='grid';$('#modalSave').onclick=()=>{onSave();closeModal();refresh();}}
-function closeModal(){$('#modalWrap').style.display='none'}
+function openModal(title,body,onSave){
+
+ $('#modal').innerHTML =
+ '<div class="page-head">'+
+ '<h2 style="margin:0">'+title+'</h2>'+
+ '<button class="btn secondary" onclick="closeModal()">Cerrar</button>'+
+ '</div>'+
+ body+
+ '<div class="actions">'+
+ '<button class="btn" id="modalSave">Guardar</button>'+
+ '</div>';
+
+ $('#modalWrap').style.display='grid';
+
+ $('#modalSave').onclick=()=>{
+  onSave();
+  closeModal();
+  refresh();
+ };
+
+}
 function openForm(type){
 
  const ask=(label,def='')=>prompt(label,def);
