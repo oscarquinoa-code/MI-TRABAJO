@@ -1304,6 +1304,7 @@ if(!state || !Array.isArray(state.modules)){
  localStorage.removeItem('mitrabajo_final');
  state=JSON.parse(JSON.stringify(defaultState));
 }
+  console.log("MI TRABAJO ARRANCA");
  applyTheme();navRender();show('inicio');save();
 if('serviceWorker' in navigator){
  window.addEventListener('load',()=>{
