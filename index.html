@@ -370,13 +370,38 @@ function editJob(i){
 
  const j=state.jobs[i];
 
- const estado=prompt(
-  'Estado: Pendiente / En curso / Realizado / Cancelado',
-  j.status
- );
+ const cliente=prompt('Cliente',j.client||'');
+ if(cliente===null)return;
 
+ const fecha=prompt('Fecha (DD-MM-YY)',j.date||'');
+ if(fecha===null)return;
+
+ const tipo=prompt('Tipo de trabajo',j.type||'');
+ if(tipo===null)return;
+
+ const importeF=prompt(
+  'Importe F (factura)',
+  j.amountF??j.amount??0
+ );
+ if(importeF===null)return;
+
+ const importeN=prompt(
+  'Importe N (en negro)',
+  j.amountN??0
+ );
+ if(importeN===null)return;
+
+ const estado=prompt(
+  'Estado: Realizado / No realizado',
+  j.status==='Realizado'?'Realizado':'No realizado'
+ );
  if(estado===null)return;
 
+ j.client=cliente;
+ j.date=fecha;
+ j.type=tipo;
+ j.amountF=Number(importeF.replace(',','.'))||0;
+ j.amountN=Number(importeN.replace(',','.'))||0;
  j.status=estado;
 
  save();
