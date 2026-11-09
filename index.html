@@ -260,90 +260,43 @@ function renderTrabajos(){
  </div>
 
  <div class="card">
-
   <table class="table">
-
    <thead>
     ${tableHeaders([
-     'Fecha',
-     'Hora',
      'Cliente',
-     'Trabajo',
-     'Área',
-     'Horas',
-     'Importe',
+     'Fecha',
+     'Tipo trabajo',
+     'Importe F',
+     'Importe N',
      'Estado',
      'Acciones'
     ])}
    </thead>
-
    <tbody>
-
     ${state.jobs.map((j,i)=>`
-
      <tr>
-
-      <td>${j.date}</td>
-
-      <td>${j.time}</td>
-
-      <td>${j.client}</td>
-
+      <td>${j.client||''}</td>
+      <td>${j.date||''}</td>
+      <td>${j.type||''}</td>
+      <td>${money(j.amountF??j.amount??0)}</td>
+      <td>${money(j.amountN??0)}</td>
       <td>
-       ${j.type}
-       <div class="muted">${j.description||''}</div>
+       <select onchange="state.jobs[${i}].status=this.value;save();refresh()">
+        <option value="Realizado" ${j.status==='Realizado'?'selected':''}>Realizado</option>
+        <option value="No realizado" ${j.status!=='Realizado'?'selected':''}>No realizado</option>
+       </select>
       </td>
-
-      <td>${j.area}</td>
-
-      <td>${j.hours} h</td>
-
-      <td>${money(j.amount)}</td>
-
       <td>
-
-       <button
-        class="btn secondary"
-        onclick="changeJobStatus(${i})">
-
-        ${j.status}
-
-       </button>
-
+       <button class="btn secondary" onclick="editJob(${i})">Editar</button>
+       <button class="btn danger" onclick="deleteItem('jobs',${i},'Trabajo')">Eliminar</button>
       </td>
-
-      <td>
-
-       <button
-        class="btn secondary"
-        onclick="editJob(${i})">
-
-        Editar
-
-       </button>
-
-       <button
-        class="btn danger"
-        onclick="deleteItem('jobs',${i},'Trabajo')">
-
-        Eliminar
-
-       </button>
-
-      </td>
-
      </tr>
-
     `).join('')}
-
    </tbody>
-
   </table>
-
  </div>
  `;
 }
-
 function changeJobStatus(i){
 
  const estados=[
